@@ -4,94 +4,516 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Keegan Wang</title>
-  <meta name="description" content="Personal site of Keegan Wang.">
+  <meta name="description" content="Keegan Wang — software, film, and the light between them.">
+  <meta name="theme-color" content="#0c0806">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #fdfdfc;
-      --text: #1a1a1a;
-      --muted: #6b6b6b;
-      --accent: #2456d6;
-      --rule: #e6e4e0;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #131314;
-        --text: #eceae6;
-        --muted: #9b9a96;
-        --accent: #7ea2ff;
-        --rule: #2a2a2c;
-      }
+      --bg: #0c0806;
+      --cream: #f2e5d0;
+      --cream-dim: rgba(242, 229, 208, 0.55);
+      --cream-faint: rgba(242, 229, 208, 0.32);
+      --amber: #ffc98a;
     }
     * { box-sizing: border-box; }
+    html { scroll-behavior: auto; }
     body {
       margin: 0;
       background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-      line-height: 1.65;
-      font-size: 17px;
+      color: var(--cream);
+      font-family: "Fraunces", Georgia, serif;
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
-    main {
-      max-width: 40rem;
-      margin: 0 auto;
-      padding: 6rem 1.5rem 4rem;
+    a { color: inherit; text-decoration: none; transition: color 0.4s ease; }
+    a:hover { color: var(--amber); }
+
+    #scene {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
     }
+    #scene canvas { display: block; }
+
+    /* film grade overlays */
+    .vignette {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background: radial-gradient(ellipse at 50% 46%, transparent 52%, rgba(5, 3, 2, 0.62) 100%);
+    }
+    .grain {
+      position: fixed;
+      inset: -60px;
+      z-index: 3;
+      pointer-events: none;
+      opacity: 0.07;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      animation: grain 0.9s steps(4) infinite;
+    }
+    @keyframes grain {
+      0% { transform: translate(0, 0); }
+      25% { transform: translate(-24px, 16px); }
+      50% { transform: translate(18px, -22px); }
+      75% { transform: translate(-14px, -10px); }
+      100% { transform: translate(0, 0); }
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 1.6rem 2rem;
+      font-size: 0.8rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--cream-dim);
+    }
+    nav .links { display: flex; gap: 1.8rem; }
+
+    .spacer { height: 520vh; }
+
+    .moment {
+      position: fixed;
+      inset: 0;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 1.5rem;
+      opacity: 0;
+      pointer-events: none;
+      will-change: opacity, transform;
+    }
+    .moment.active { pointer-events: auto; }
+    .moment .inner { max-width: 38rem; }
+
     h1 {
-      font-size: 1.6rem;
-      font-weight: 650;
-      margin: 0 0 0.25rem;
-      letter-spacing: -0.01em;
+      font-size: clamp(3rem, 9vw, 6.6rem);
+      font-weight: 300;
+      letter-spacing: -0.015em;
+      line-height: 1.05;
+      margin: 0;
+      text-shadow: 0 0 60px rgba(255, 184, 119, 0.18);
     }
     .tagline {
-      color: var(--muted);
-      margin: 0 0 2.5rem;
+      margin: 1.4rem 0 0;
+      font-style: italic;
+      font-size: clamp(1rem, 2.2vw, 1.25rem);
+      color: var(--cream-dim);
+      letter-spacing: 0.01em;
     }
     h2 {
-      font-size: 0.85rem;
-      font-weight: 600;
+      font-size: 0.8rem;
+      font-weight: 400;
+      letter-spacing: 0.32em;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-      margin: 2.5rem 0 0.75rem;
+      color: var(--cream-faint);
+      margin: 0 0 2.2rem;
     }
-    p { margin: 0 0 1rem; }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    ul.links {
+    .worklist {
       list-style: none;
-      padding: 0;
       margin: 0;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem 1.5rem;
+      padding: 0;
+      font-size: clamp(1.5rem, 3.6vw, 2.3rem);
+      line-height: 1.9;
     }
-    footer {
-      margin-top: 4rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--rule);
-      color: var(--muted);
-      font-size: 0.85rem;
+    .worklist .note {
+      font-style: italic;
+      font-size: 0.55em;
+      color: var(--cream-dim);
+      margin-left: 0.6em;
+      letter-spacing: 0.02em;
+    }
+    .worklist .soon {
+      color: var(--cream-faint);
+      font-style: italic;
+      font-size: 0.72em;
+    }
+    .prose {
+      font-size: clamp(1.15rem, 2.4vw, 1.5rem);
+      line-height: 1.75;
+      margin: 0;
+      color: var(--cream);
+    }
+    .prose em { color: var(--amber); font-weight: 300; }
+    .contact-line {
+      font-size: clamp(1.2rem, 2.6vw, 1.7rem);
+      margin: 0;
+      line-height: 1.8;
+    }
+    .contact-line a { border-bottom: 1px solid rgba(242, 229, 208, 0.25); padding-bottom: 2px; }
+    .contact-line a:hover { border-color: var(--amber); }
+    .fin {
+      margin-top: 3.5rem;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: var(--cream-faint);
+      letter-spacing: 0.08em;
+    }
+
+    .scroll-cue {
+      position: fixed;
+      bottom: 2.2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.7rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--cream-faint);
+      transition: opacity 1.2s ease;
+      pointer-events: none;
+    }
+    .scroll-cue::after {
+      content: "";
+      width: 1px;
+      height: 44px;
+      background: linear-gradient(to bottom, var(--cream-faint), transparent);
+    }
+
+    /* fallback when WebGL is unavailable */
+    .flat .spacer, .flat .scroll-cue, .flat #scene { display: none; }
+    .flat .moment {
+      position: relative;
+      inset: auto;
+      opacity: 1 !important;
+      transform: none !important;
+      pointer-events: auto;
+      min-height: 70vh;
+    }
+    .flat body { overflow-x: hidden; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .grain { animation: none; }
     }
   </style>
 </head>
 <body>
-  <main>
-    <h1>Keegan Wang</h1>
-    <p class="tagline">Software engineer. Currently building <a href="https://phoebe.work">Phoebe</a>.</p>
+  <div id="scene" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
 
-    <h2>About</h2>
-    <p>
-      Hi, I'm Keegan. This is my corner of the internet — a place for what I'm
-      working on, thinking about, and building. More soon.
-    </p>
+  <nav>
+    <a href="/">Keegan Wang</a>
+    <div class="links">
+      <a href="https://github.com/keegan-wang">GitHub</a>
+      <a href="mailto:keegan@phoebe.work">Email</a>
+    </div>
+  </nav>
 
-    <h2>Elsewhere</h2>
-    <ul class="links">
-      <li><a href="https://github.com/keegan-wang">GitHub</a></li>
-      <li><a href="mailto:keegan@phoebe.work">Email</a></li>
-    </ul>
+  <section class="moment" id="m-hero">
+    <div class="inner">
+      <h1>Keegan Wang</h1>
+      <p class="tagline">software, film, and the light between them.</p>
+    </div>
+  </section>
 
-    <footer>© 2026 Keegan Wang</footer>
-  </main>
+  <section class="moment" id="m-work">
+    <div class="inner">
+      <h2>Work</h2>
+      <ul class="worklist">
+        <li><a href="https://phoebe.work">Phoebe</a><span class="note">what I'm building now</span></li>
+        <li><span class="soon">more soon</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="moment" id="m-about">
+    <div class="inner">
+      <h2>About</h2>
+      <p class="prose">
+        I'm Keegan — an engineer drawn to cameras, generative video,
+        and tools for people who make <em>moving images</em>.
+        This site is a dark room with one good light.
+      </p>
+    </div>
+  </section>
+
+  <section class="moment" id="m-contact">
+    <div class="inner">
+      <h2>Contact</h2>
+      <p class="contact-line">
+        <a href="mailto:keegan@phoebe.work">keegan@phoebe.work</a>
+        &nbsp;·&nbsp;
+        <a href="https://github.com/keegan-wang">GitHub</a>
+      </p>
+      <p class="fin">fin.</p>
+    </div>
+  </section>
+
+  <div class="scroll-cue" id="cue">Scroll</div>
+  <div class="spacer" aria-hidden="true"></div>
+
+  <noscript>
+    <style>.moment{position:relative;inset:auto;opacity:1;pointer-events:auto;min-height:60vh}.spacer,.scroll-cue{display:none}</style>
+  </noscript>
+
+  <script type="importmap">
+    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }
+  </script>
+  <script type="module">
+    import * as THREE from 'three';
+
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const container = document.getElementById('scene');
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    } catch (e) {
+      document.documentElement.classList.add('flat');
+    }
+
+    if (renderer) {
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      renderer.setSize(innerWidth, innerHeight);
+      renderer.setClearColor(0x0c0806, 1);
+      container.appendChild(renderer.domElement);
+
+      const scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x0c0806, 0.045);
+      const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.1, 100);
+
+      // ---- volumetric beam (two nested cones, custom falloff shader) ----
+      const beamGroup = new THREE.Group();
+      const SOURCE = new THREE.Vector3(-7.5, 6.5, -6);
+      const AIM = new THREE.Vector3(2.2, -3.2, 3.2);
+      const dir = AIM.clone().sub(SOURCE).normalize();
+      beamGroup.position.copy(SOURCE);
+      beamGroup.quaternion.setFromUnitVectors(new THREE.Vector3(0, -1, 0), dir);
+      scene.add(beamGroup);
+
+      const H = 22;
+      function makeBeam(r0, r1, intensity, exponent) {
+        const geo = new THREE.CylinderGeometry(r0, r1, H, 64, 24, true);
+        geo.translate(0, -H / 2, 0);
+        const mat = new THREE.ShaderMaterial({
+          transparent: true,
+          depthWrite: false,
+          side: THREE.DoubleSide,
+          blending: THREE.AdditiveBlending,
+          uniforms: {
+            uColor: { value: new THREE.Color(0xffb877) },
+            uIntensity: { value: intensity },
+            uTime: { value: 0 },
+            uH: { value: H },
+            uExp: { value: exponent },
+          },
+          vertexShader: `
+            uniform float uH;
+            varying float vT; varying vec3 vN; varying vec3 vV;
+            void main() {
+              vT = -position.y / uH;
+              vec4 mv = modelViewMatrix * vec4(position, 1.0);
+              vN = normalize(normalMatrix * normal);
+              vV = normalize(-mv.xyz);
+              gl_Position = projectionMatrix * mv;
+            }`,
+          fragmentShader: `
+            uniform vec3 uColor; uniform float uIntensity; uniform float uTime; uniform float uExp;
+            varying float vT; varying vec3 vN; varying vec3 vV;
+            void main() {
+              float edge = pow(abs(dot(vN, vV)), uExp);
+              float len = smoothstep(0.0, 0.10, vT) * (1.0 - smoothstep(0.42, 1.0, vT));
+              float flicker = 0.95 + 0.05 * sin(uTime * 1.1 + sin(uTime * 0.63) * 2.1);
+              gl_FragColor = vec4(uColor, edge * len * flicker * uIntensity);
+            }`,
+        });
+        const mesh = new THREE.Mesh(geo, mat);
+        beamGroup.add(mesh);
+        return mat;
+      }
+      const beamCore = makeBeam(0.28, 3.4, 0.34, 2.6);
+      const beamHalo = makeBeam(0.55, 5.2, 0.12, 1.6);
+
+      // glow at the source
+      const glowCanvas = document.createElement('canvas');
+      glowCanvas.width = glowCanvas.height = 256;
+      const gctx = glowCanvas.getContext('2d');
+      const grad = gctx.createRadialGradient(128, 128, 0, 128, 128, 128);
+      grad.addColorStop(0, 'rgba(255, 224, 178, 1)');
+      grad.addColorStop(0.25, 'rgba(255, 195, 130, 0.55)');
+      grad.addColorStop(1, 'rgba(255, 184, 119, 0)');
+      gctx.fillStyle = grad;
+      gctx.fillRect(0, 0, 256, 256);
+      const glow = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: new THREE.CanvasTexture(glowCanvas),
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        transparent: true,
+      }));
+      glow.scale.setScalar(5.5);
+      beamGroup.add(glow);
+
+      // ---- dust motes drifting inside the beam ----
+      const dotCanvas = document.createElement('canvas');
+      dotCanvas.width = dotCanvas.height = 64;
+      const dctx = dotCanvas.getContext('2d');
+      const dgrad = dctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+      dgrad.addColorStop(0, 'rgba(255, 232, 198, 1)');
+      dgrad.addColorStop(1, 'rgba(255, 232, 198, 0)');
+      dctx.fillStyle = dgrad;
+      dctx.fillRect(0, 0, 64, 64);
+
+      const isMobile = innerWidth < 700;
+      const COUNT = isMobile ? 320 : 620;
+      const positions = new Float32Array(COUNT * 3);
+      const seeds = [];
+      for (let i = 0; i < COUNT; i++) {
+        seeds.push({
+          t: 0.06 + Math.random() * 0.88,
+          ang: Math.random() * Math.PI * 2,
+          rad: Math.sqrt(Math.random()) * 0.92,
+          spin: (Math.random() - 0.5) * 0.12,
+          rise: (Math.random() - 0.5) * 0.008,
+          wob: Math.random() * Math.PI * 2,
+        });
+      }
+      const dustGeo = new THREE.BufferGeometry();
+      dustGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const dustMat = new THREE.PointsMaterial({
+        map: new THREE.CanvasTexture(dotCanvas),
+        size: 0.055,
+        transparent: true,
+        opacity: 0.6,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        sizeAttenuation: true,
+      });
+      const dust = new THREE.Points(dustGeo, dustMat);
+      beamGroup.add(dust);
+
+      function layoutDust(time) {
+        for (let i = 0; i < COUNT; i++) {
+          const s = seeds[i];
+          const t = s.t;
+          const r = (0.28 + t * 3.1) * s.rad * (1 + 0.04 * Math.sin(time * 0.4 + s.wob));
+          const a = s.ang + time * s.spin;
+          positions[i * 3] = Math.cos(a) * r;
+          positions[i * 3 + 1] = -t * H;
+          positions[i * 3 + 2] = Math.sin(a) * r;
+          s.t += s.rise * 0.016;
+          if (s.t < 0.05) s.t = 0.94;
+          if (s.t > 0.95) s.t = 0.06;
+        }
+        dustGeo.attributes.position.needsUpdate = true;
+      }
+      layoutDust(0);
+
+      // ---- scroll choreography ----
+      // camera keyframes per moment: [position, lookAt, beam intensity multiplier]
+      const KEYS = [
+        { pos: new THREE.Vector3(0, 0.6, 9.0), look: new THREE.Vector3(0, 0.4, 0), beam: 1.0 },
+        { pos: new THREE.Vector3(2.3, 0.9, 6.6), look: new THREE.Vector3(-0.4, 0.2, 0), beam: 0.8 },
+        { pos: new THREE.Vector3(-1.9, 0.4, 5.4), look: new THREE.Vector3(0.5, 0.3, 0), beam: 0.62 },
+        { pos: new THREE.Vector3(0, 0.1, 4.2), look: new THREE.Vector3(0, 0.5, -1), beam: 0.34 },
+      ];
+      const MOMENTS = [
+        { el: document.getElementById('m-hero'), p: 0.0 },
+        { el: document.getElementById('m-work'), p: 0.36 },
+        { el: document.getElementById('m-about'), p: 0.68 },
+        { el: document.getElementById('m-contact'), p: 1.0 },
+      ];
+      const WIDTH = 0.15; // half-width of each moment's visibility window
+
+      const ease = (t) => 0.5 - 0.5 * Math.cos(Math.PI * Math.min(Math.max(t, 0), 1));
+      const camPos = KEYS[0].pos.clone();
+      const camLook = KEYS[0].look.clone();
+      const targetPos = new THREE.Vector3();
+      const targetLook = new THREE.Vector3();
+      let beamLevel = 1;
+      let mouseX = 0, mouseY = 0;
+
+      function progress() {
+        const max = document.documentElement.scrollHeight - innerHeight;
+        return max > 0 ? scrollY / max : 0;
+      }
+
+      function keyframeAt(p) {
+        const stops = MOMENTS.map((m) => m.p);
+        let i = 0;
+        while (i < stops.length - 2 && p > stops[i + 1]) i++;
+        const t = ease((p - stops[i]) / (stops[i + 1] - stops[i]));
+        targetPos.lerpVectors(KEYS[i].pos, KEYS[i + 1].pos, t);
+        targetLook.lerpVectors(KEYS[i].look, KEYS[i + 1].look, t);
+        return KEYS[i].beam + (KEYS[i + 1].beam - KEYS[i].beam) * t;
+      }
+
+      function updateMoments(p) {
+        for (const m of MOMENTS) {
+          const d = Math.abs(p - m.p) / WIDTH;
+          const o = Math.max(0, 1 - d);
+          const eased = o * o * (3 - 2 * o);
+          m.el.style.opacity = eased.toFixed(3);
+          m.el.style.transform = `translateY(${((p - m.p) / WIDTH) * -26}px)`;
+          m.el.classList.toggle('active', eased > 0.5);
+        }
+        document.getElementById('cue').style.opacity = p < 0.02 ? 1 : 0;
+      }
+
+      addEventListener('pointermove', (e) => {
+        mouseX = (e.clientX / innerWidth) * 2 - 1;
+        mouseY = (e.clientY / innerHeight) * 2 - 1;
+      }, { passive: true });
+
+      addEventListener('resize', () => {
+        camera.aspect = innerWidth / innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(innerWidth, innerHeight);
+        if (reduced) renderFrame(0);
+      });
+
+      let clockStart = performance.now();
+      function renderFrame(time) {
+        const p = progress();
+        const targetBeam = keyframeAt(p);
+        beamLevel += (targetBeam - beamLevel) * 0.06;
+        camPos.lerp(targetPos, 0.055);
+        camLook.lerp(targetLook, 0.055);
+        camera.position.set(
+          camPos.x + mouseX * 0.32,
+          camPos.y - mouseY * 0.18,
+          camPos.z
+        );
+        camera.lookAt(camLook);
+        beamCore.uniforms.uTime.value = time;
+        beamHalo.uniforms.uTime.value = time;
+        beamCore.uniforms.uIntensity.value = 0.34 * beamLevel;
+        beamHalo.uniforms.uIntensity.value = 0.12 * beamLevel;
+        glow.material.opacity = 0.85 * beamLevel;
+        dustMat.opacity = 0.6 * beamLevel;
+        updateMoments(p);
+        renderer.render(scene, camera);
+      }
+
+      if (reduced) {
+        renderFrame(0);
+        addEventListener('scroll', () => renderFrame(0), { passive: true });
+      } else {
+        renderer.setAnimationLoop(() => {
+          const t = (performance.now() - clockStart) / 1000;
+          layoutDust(t);
+          renderFrame(t);
+        });
+      }
+    } else {
+      // flat fallback: stack the moments as a normal page
+      document.documentElement.classList.add('flat');
+    }
+  </script>
 </body>
 </html>
