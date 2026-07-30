@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Keegan Wang</title>
+  <meta name="description" content="Personal site of Keegan Wang.">
+  <style>
+    :root {
+      --bg: #fdfdfc;
+      --text: #1a1a1a;
+      --muted: #6b6b6b;
+      --accent: #2456d6;
+      --rule: #e6e4e0;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #131314;
+        --text: #eceae6;
+        --muted: #9b9a96;
+        --accent: #7ea2ff;
+        --rule: #2a2a2c;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      line-height: 1.65;
+      font-size: 17px;
+    }
+    main {
+      max-width: 40rem;
+      margin: 0 auto;
+      padding: 6rem 1.5rem 4rem;
+    }
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 650;
+      margin: 0 0 0.25rem;
+      letter-spacing: -0.01em;
+    }
+    .tagline {
+      color: var(--muted);
+      margin: 0 0 2.5rem;
+    }
+    h2 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin: 2.5rem 0 0.75rem;
+    }
+    p { margin: 0 0 1rem; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    ul.links {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+    }
+    footer {
+      margin-top: 4rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--rule);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Keegan Wang</h1>
+    <p class="tagline">Software engineer. Currently building <a href="https://phoebe.work">Phoebe</a>.</p>
+
+    <h2>About</h2>
+    <p>
+      Hi, I'm Keegan. This is my corner of the internet — a place for what I'm
+      working on, thinking about, and building. More soon.
+    </p>
+
+    <h2>Elsewhere</h2>
+    <ul class="links">
+      <li><a href="https://github.com/keegan-wang">GitHub</a></li>
+      <li><a href="mailto:keegan@phoebe.work">Email</a></li>
+    </ul>
+
+    <footer>© 2026 Keegan Wang</footer>
+  </main>
+</body>
+</html>
