@@ -5,53 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Keegan Wang</title>
   <meta name="description" content="Keegan Wang — software, film, and the light between them.">
-  <meta name="theme-color" content="#0c0806">
+  <meta name="theme-color" content="#0b0705">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0c0806;
-      --cream: #f2e5d0;
-      --cream-dim: rgba(242, 229, 208, 0.55);
-      --cream-faint: rgba(242, 229, 208, 0.32);
-      --amber: #ffc98a;
+      --bg: #0b0705;
+      --cream-dim: rgba(242, 229, 208, 0.5);
+      --cream-faint: rgba(242, 229, 208, 0.28);
+      --ink: rgba(43, 24, 12, 0.92);
+      --ink-dim: rgba(43, 24, 12, 0.62);
+      --ink-faint: rgba(43, 24, 12, 0.42);
     }
     * { box-sizing: border-box; }
-    html { scroll-behavior: auto; }
+    html, body { height: 100%; }
     body {
       margin: 0;
       background: var(--bg);
-      color: var(--cream);
       font-family: "Fraunces", Georgia, serif;
       font-weight: 300;
       -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
+      overflow: hidden;
+      overscroll-behavior: none;
     }
-    a { color: inherit; text-decoration: none; transition: color 0.4s ease; }
-    a:hover { color: var(--amber); }
+    a { color: inherit; text-decoration: none; transition: color 0.3s ease; }
 
-    #scene {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-    }
+    #scene { position: fixed; inset: 0; z-index: 0; }
     #scene canvas { display: block; }
 
-    /* film grade overlays */
     .vignette {
-      position: fixed;
-      inset: 0;
-      z-index: 2;
-      pointer-events: none;
-      background: radial-gradient(ellipse at 50% 46%, transparent 52%, rgba(5, 3, 2, 0.62) 100%);
+      position: fixed; inset: 0; z-index: 2; pointer-events: none;
+      background: radial-gradient(ellipse at 50% 48%, transparent 55%, rgba(4, 2, 1, 0.6) 100%);
     }
     .grain {
-      position: fixed;
-      inset: -60px;
-      z-index: 3;
-      pointer-events: none;
-      opacity: 0.07;
+      position: fixed; inset: -60px; z-index: 3; pointer-events: none; opacity: 0.08;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
       animation: grain 0.9s steps(4) infinite;
     }
@@ -63,144 +51,231 @@
       100% { transform: translate(0, 0); }
     }
 
-    nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 10;
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      padding: 1.6rem 2rem;
-      font-size: 0.8rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--cream-dim);
+    /* the projected site's own header, cast in ink */
+    .pnav {
+      position: absolute; top: 0; left: 0; right: 0; z-index: 7;
+      display: flex; justify-content: space-between; align-items: baseline;
+      gap: 1em; padding: 4.2% 5.5% 0;
     }
-    nav .links { display: flex; gap: 1.8rem; }
+    .pmenu-right { display: flex; gap: 1.8em; margin-left: auto; }
+    .pcontact {
+      font-size: 0.78em; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--ink-dim); padding-bottom: 3px; border-bottom: 1px solid transparent;
+    }
+    .pcontact:hover { color: var(--ink); }
+    .pcontact.on { color: var(--ink); border-color: var(--ink-dim); }
+    .pnav button {
+      background: none; border: none; padding: 0; cursor: pointer;
+      font-family: "Fraunces", Georgia, serif; font-weight: 400;
+      transition: color 0.3s ease, border-color 0.3s ease;
+    }
+    .pname {
+      font-size: 1.05em; font-weight: 600; letter-spacing: 0.02em; color: var(--ink);
+      transition: opacity 0.5s ease;
+    }
+    .pname.hidden, .pback.hidden { opacity: 0; pointer-events: none; }
+    .pleft { display: flex; align-items: baseline; gap: 1.1em; }
+    .pback {
+      font-size: 1.2em; color: var(--ink-dim);
+      transition: color 0.3s ease, opacity 0.5s ease;
+    }
+    .pback:hover { color: var(--ink); }
 
-    .spacer { height: 520vh; }
+    /* item detail page, projected like every other section */
+    #sd { align-items: flex-start; }
+    #sd .inner {
+      max-height: 100%; overflow-y: auto; padding-right: 1.2em; padding-bottom: 2.5em;
+      scrollbar-width: thin; scrollbar-color: rgba(43, 24, 12, 0.3) transparent;
+      -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 88%, transparent 100%);
+      mask-image: linear-gradient(to bottom, #000 0, #000 88%, transparent 100%);
+    }
+    .detail-title { font-size: 2.7em; font-weight: 400; line-height: 1.15; margin: 0 0 0.55em; max-width: 15em; }
+    .detail-prose { font-size: 1.08em; line-height: 1.8; max-width: 34em; }
+    .detail-prose p { margin: 0 0 1.1em; }
+    .plinks { display: flex; gap: 1.7em; flex-wrap: wrap; margin-top: 1.4em; }
+    #dembed { margin: 1.4em 0 0.4em; display: flex; gap: 1.4em; flex-wrap: wrap; align-items: flex-start; }
+    /* film thumbnails: small living previews, stats beneath, click to screen */
+    .vcard { cursor: pointer; }
+    .vthumb {
+      position: relative; display: inline-block; border-radius: 8px; overflow: hidden;
+      background: #000; box-shadow: 0 8px 34px rgba(30, 14, 4, 0.35);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .vcard:hover .vthumb { transform: translateY(-4px); box-shadow: 0 14px 44px rgba(30, 14, 4, 0.45); }
+    .vthumb video { display: block; height: 13em; width: auto; }
+    .vmeta { margin-top: 0.65em; max-width: 11em; }
+    .vmeta strong { display: block; font-weight: 600; font-size: 0.95em; }
+    .vmeta span { display: block; font-size: 0.72em; font-style: italic; color: var(--ink-dim); margin-top: 0.2em; line-height: 1.5; }
+    /* headline stats row on detail pages */
+    #dstats { display: flex; gap: 2.6em; margin: 0.1em 0 1.3em; }
+    #dstats .stat b { display: block; font-size: 2.1em; font-weight: 400; line-height: 1.1; }
+    #dstats .stat span {
+      font-size: 0.72em; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-faint);
+    }
+    /* centered watch badge over video previews */
+    .vplay {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 2.6em; height: 2.6em; border-radius: 50%;
+      background: rgba(0, 0, 0, 0.35) no-repeat center / 42% url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M8 5v14l11-7z'/%3E%3C/svg%3E");
+      border: 1.5px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+      transition: transform 0.3s ease;
+    }
+    .vcard:hover .vplay { transform: translate(-50%, -50%) scale(1.15); }
 
-    .moment {
-      position: fixed;
-      inset: 0;
-      z-index: 5;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 0 1.5rem;
-      opacity: 0;
-      pointer-events: none;
-      will-change: opacity, transform;
+    /* cinema mode: the film fills the projected light on the wall */
+    #cinema {
+      position: absolute; inset: 0; z-index: 40; background: #0a0603;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; border-radius: 4px;
+      transition: opacity 0.5s ease;
     }
-    .moment.active { pointer-events: auto; }
-    .moment .inner { max-width: 38rem; }
+    #cinema.closed { opacity: 0; pointer-events: none; }
+    #cinema video { max-height: 100%; max-width: 100%; cursor: pointer; }
+    .cine-grain {
+      position: absolute; inset: -60px; pointer-events: none; opacity: 0.09;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      animation: grain 0.9s steps(4) infinite;
+    }
+    .cine-vignette {
+      position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 52%, rgba(0, 0, 0, 0.6) 100%);
+    }
+    #cineclose {
+      position: absolute; top: 0.2em; right: 0.55em; z-index: 5;
+      background: none; border: none; cursor: pointer;
+      font-family: "Fraunces", Georgia, serif; font-size: 2.2em; font-weight: 300;
+      color: rgba(242, 229, 208, 0.55); transition: color 0.3s ease;
+    }
+    #cineclose:hover { color: #f2e5d0; }
+    .plinks a {
+      font-size: 0.82em; letter-spacing: 0.14em; text-transform: uppercase;
+      border-bottom: 1px solid var(--ink-faint); padding-bottom: 2px;
+    }
+    .plinks a:hover { color: #000; border-color: var(--ink); }
 
-    h1 {
-      font-size: clamp(3rem, 9vw, 6.6rem);
-      font-weight: 300;
-      letter-spacing: -0.015em;
-      line-height: 1.05;
-      margin: 0;
-      text-shadow: 0 0 60px rgba(255, 184, 119, 0.18);
+    /* the window: four big panes, icons breaking out of their corners */
+    #panes {
+      display: grid; grid-template-columns: repeat(6, 1fr);
+      gap: 1em; margin-top: 1.9em; max-width: 40em;
     }
-    .tagline {
-      margin: 1.4rem 0 0;
-      font-style: italic;
-      font-size: clamp(1rem, 2.2vw, 1.25rem);
-      color: var(--cream-dim);
-      letter-spacing: 0.01em;
+    .pane { grid-column: span 2; }
+    .pane {
+      position: relative; height: 7.2em; overflow: visible;
+      background: none; cursor: pointer; text-align: left;
+      border: 1px solid var(--ink-faint); border-radius: 6px;
+      font-family: "Fraunces", Georgia, serif; color: var(--ink-dim);
+      transition: color 0.35s ease, border-color 0.35s ease, background 0.35s ease;
     }
+    .pane svg, .pane .pimg {
+      position: absolute; top: -2.9em; right: -1.5em; z-index: 2;
+      width: 8em; height: 8em; overflow: visible; object-fit: contain;
+      transform: rotate(-3deg);
+      transition: transform 0.35s ease;
+    }
+    .pane .pimg ~ svg { display: none; } /* drawing file wins; svg is the fallback */
+    .pane:hover .pimg { transform: rotate(2deg) scale(1.3) translateY(-8px); }
+
+    /* hover sprite animation: 16-frame strip, driven by steps() */
+    .pane .panim {
+      position: absolute; top: -2.9em; right: -1.5em; z-index: 3;
+      width: 8em; height: 8em;
+      background-repeat: no-repeat;
+      background-size: 128em 8em; /* 16 frames x 8em */
+      background-position: 0 0;
+      opacity: 0; pointer-events: none;
+      transform: rotate(-3deg);
+      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
+    }
+    @keyframes sprite16 { to { background-position: -128em 0; } }
+    .pane.has-anim:hover .pimg, .pane.has-anim:hover svg { opacity: 0; }
+    .pane.has-anim:hover .panim {
+      opacity: 1;
+      transform: rotate(2deg) scale(1.3) translateY(-8px);
+      animation: sprite16 var(--spd, 1.1s) steps(16) infinite;
+    }
+    .pane .label {
+      position: absolute; left: 1.1em; bottom: 0.9em;
+      font-size: 0.85em; letter-spacing: 0.2em; text-transform: uppercase;
+    }
+
+    /* click transition: the beast grows to center stage, then returns */
+    #zoomer {
+      position: absolute; top: 0; left: 0; z-index: 12;
+      width: 8em; height: 8em;
+      background-repeat: no-repeat; pointer-events: none;
+      opacity: 0; display: none; will-change: transform;
+    }
+    #zoomer.anim { background-size: 128em 8em; animation: sprite16 var(--spd, 1.1s) steps(16) infinite; }
+    #zoomer.static { background-size: contain; background-position: center; }
+    .pane:hover { color: var(--ink); border-color: var(--ink-dim); }
+    .pane:hover svg { transform: rotate(2deg) scale(1.3) translateY(-8px); }
+    .pane.on { color: var(--ink); border-color: var(--ink); background: rgba(43, 24, 12, 0.05); }
+
+    /* the projected image — tracked to the light rectangle on the wall */
+    #frame {
+      position: fixed; top: 0; left: 0; z-index: 5;
+      transform-origin: 0 0;
+      color: var(--ink);
+      opacity: 0; /* driven per-frame by the light level */
+      will-change: transform, opacity;
+    }
+    .slide {
+      position: absolute; inset: 0;
+      display: flex; align-items: center;
+      text-align: left; padding: 10% 8% 7%;
+      opacity: 0; pointer-events: none;
+      will-change: opacity, transform, filter;
+    }
+    .slide.active { pointer-events: auto; }
+    .slide .inner { max-width: 36em; width: 100%; }
+    .slide * { text-shadow: 0 0 1px rgba(43, 24, 12, 0.35); }
+
+    h1 { font-size: 4.6em; font-weight: 400; letter-spacing: -0.01em; line-height: 1.05; margin: 0; }
+    .tagline { margin: 0.7em 0 0; font-style: italic; font-size: 1.15em; color: var(--ink-dim); }
+    .subline { margin: 1.1em 0 0; font-size: 0.82em; letter-spacing: 0.06em; color: var(--ink-faint); }
     h2 {
-      font-size: 0.8rem;
-      font-weight: 400;
-      letter-spacing: 0.32em;
-      text-transform: uppercase;
-      color: var(--cream-faint);
-      margin: 0 0 2.2rem;
+      font-size: 0.78em; font-weight: 600; letter-spacing: 0.34em;
+      text-transform: uppercase; color: var(--ink-faint); margin: 0 0 1.8em;
     }
-    .worklist {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      font-size: clamp(1.5rem, 3.6vw, 2.3rem);
-      line-height: 1.9;
+    .worklist { list-style: none; margin: 0; padding: 0; font-size: 1.85em; line-height: 1.35; font-weight: 400; }
+    .worklist li { margin-bottom: 1.05em; }
+    .worklist li:last-child { margin-bottom: 0; }
+    .worklist a, .worklist .item { border-bottom: 1px solid var(--ink-faint); padding-bottom: 1px; }
+    .worklist a:hover, .worklist .item:hover { color: #000; border-color: var(--ink); }
+    .worklist .item {
+      background: none; border-top: none; border-left: none; border-right: none;
+      padding: 0 0 1px; margin: 0; font: inherit; color: inherit;
+      cursor: pointer; text-align: left;
     }
-    .worklist .note {
-      font-style: italic;
-      font-size: 0.55em;
-      color: var(--cream-dim);
-      margin-left: 0.6em;
-      letter-spacing: 0.02em;
+    .worklist .note { display: block; font-style: italic; font-size: 0.52em; color: var(--ink-dim); margin-top: 0.35em; }
+    .worklist .soon { color: var(--ink-faint); font-style: italic; font-size: 0.78em; }
+    .worklist.compact { font-size: 1.5em; }
+    .worklist.compact li { margin-bottom: 0.8em; }
+    .prose { font-size: 1.32em; line-height: 1.75; margin: 0; font-weight: 400; }
+    .prose em { font-weight: 400; }
+    .contact-line { font-size: 1.4em; margin: 0; line-height: 1.8; font-weight: 400; }
+    .contact-line a { border-bottom: 1px solid var(--ink-faint); padding-bottom: 2px; }
+    .contact-line a:hover { color: #000; border-color: var(--ink); }
+    .fin { margin-top: 2.6em; font-style: italic; font-size: 0.9em; color: var(--ink-faint); letter-spacing: 0.08em; }
+
+    /* fallback when WebGL is unavailable: the projection becomes a warm card */
+    .flat body { overflow: auto; }
+    .flat #scene, .flat .pnav, .flat #panes { display: none; }
+    .flat #frame {
+      position: relative; transform: none !important; opacity: 1 !important;
+      width: min(92vw, 60rem) !important; height: auto !important;
+      margin: 5rem auto; font-size: 16px !important;
+      background: radial-gradient(ellipse at 50% 40%, #ffd9a8, #eebe85);
+      border-radius: 4px; box-shadow: 0 0 120px rgba(255, 196, 138, 0.25);
     }
-    .worklist .soon {
-      color: var(--cream-faint);
-      font-style: italic;
-      font-size: 0.72em;
-    }
-    .prose {
-      font-size: clamp(1.15rem, 2.4vw, 1.5rem);
-      line-height: 1.75;
-      margin: 0;
-      color: var(--cream);
-    }
-    .prose em { color: var(--amber); font-weight: 300; }
-    .contact-line {
-      font-size: clamp(1.2rem, 2.6vw, 1.7rem);
-      margin: 0;
-      line-height: 1.8;
-    }
-    .contact-line a { border-bottom: 1px solid rgba(242, 229, 208, 0.25); padding-bottom: 2px; }
-    .contact-line a:hover { border-color: var(--amber); }
-    .fin {
-      margin-top: 3.5rem;
-      font-style: italic;
-      font-size: 0.95rem;
-      color: var(--cream-faint);
-      letter-spacing: 0.08em;
+    .flat .slide {
+      position: relative; inset: auto; opacity: 1 !important;
+      transform: none !important; filter: none !important;
+      pointer-events: auto; padding: 4rem 8%;
     }
 
-    .scroll-cue {
-      position: fixed;
-      bottom: 2.2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 6;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.7rem;
-      font-size: 0.7rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--cream-faint);
-      transition: opacity 1.2s ease;
-      pointer-events: none;
-    }
-    .scroll-cue::after {
-      content: "";
-      width: 1px;
-      height: 44px;
-      background: linear-gradient(to bottom, var(--cream-faint), transparent);
-    }
-
-    /* fallback when WebGL is unavailable */
-    .flat .spacer, .flat .scroll-cue, .flat #scene { display: none; }
-    .flat .moment {
-      position: relative;
-      inset: auto;
-      opacity: 1 !important;
-      transform: none !important;
-      pointer-events: auto;
-      min-height: 70vh;
-    }
-    .flat body { overflow-x: hidden; }
-
-    @media (prefers-reduced-motion: reduce) {
-      .grain { animation: none; }
-    }
+    @media (prefers-reduced-motion: reduce) { .grain { animation: none; } }
   </style>
 </head>
 <body>
@@ -208,59 +283,297 @@
   <div class="vignette" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
 
-  <nav>
-    <a href="/">Keegan Wang</a>
-    <div class="links">
-      <a href="https://github.com/keegan-wang">GitHub</a>
-      <a href="mailto:keegan@phoebe.work">Email</a>
+  <div id="frame">
+    <div class="pnav">
+      <div class="pleft">
+        <button class="pback hidden" data-i="0" aria-label="Back">&#8592;</button>
+        <button class="pname hidden" data-i="0">Keegan Wang</button>
+      </div>
+      <div class="pmenu-right">
+        <button class="pcontact" data-i="6">Contact</button>
+      </div>
     </div>
-  </nav>
-
-  <section class="moment" id="m-hero">
-    <div class="inner">
-      <h1>Keegan Wang</h1>
-      <p class="tagline">software, film, and the light between them.</p>
+    <section class="slide" id="s0">
+      <div class="inner">
+        <h1>Keegan Wang</h1>
+        <p class="tagline">I build AI systems, and study how they fail.</p>
+        <p class="subline">electrical &amp; computer engineering + machine learning at Carnegie Mellon &middot; engineering at Phoebe</p>
+        <div id="panes">
+          <button class="pane" data-i="1" aria-label="Research" style="order: 2">
+            <span class="panim" data-anim="dragon" style="--spd: 1.5s"></span>
+            <img class="pimg" src="/icons/dragon.png?v=4" alt="" onerror="this.remove()">
+            <svg viewBox="0 0 48 48">
+                <defs><mask id="mR">
+                  <g stroke="#fff" fill="#fff" stroke-linecap="round" stroke-linejoin="round">
+                    <!-- serpentine body, tapering tail to neck -->
+                    <path d="M5 44 C13 41 15 36 11 32" fill="none" stroke-width="2.5"/>
+                    <path d="M11 32 C7 28 8 23 14 21" fill="none" stroke-width="3.1"/>
+                    <path d="M14 21 C20 19 26 20.5 29 17.5" fill="none" stroke-width="3.7"/>
+                    <path d="M29 17.5 C31.2 15.2 32.2 13.4 33.2 11.6" fill="none" stroke-width="4.2"/>
+                    <!-- head: wedge jaw aimed up-right -->
+                    <path d="M32.5 12 C33 9.5 35 8 37.5 7.8 L41 7 L38.5 9.6 L40.6 11.6 L36.6 12.4 C35 13.2 33.4 13 32.5 12 Z" stroke-width="0.9"/>
+                    <!-- antlers -->
+                    <path d="M35.8 8 C35.6 5.4 37 3.4 39.2 2.6 M37 5 C38.2 4.4 39.4 4.6 40.4 5.3" fill="none" stroke-width="1.2"/>
+                    <path d="M33.8 8.8 C33 6.2 33.6 4 35.2 2.4" fill="none" stroke-width="1.1"/>
+                    <!-- whiskers -->
+                    <path d="M40.5 8.2 C42.6 7.6 43.6 8.8 45.4 8.2" fill="none" stroke-width="0.7"/>
+                    <path d="M39.8 10.6 C42 11.2 42.4 12.8 44.6 12.8" fill="none" stroke-width="0.7"/>
+                    <!-- mane flames behind the head -->
+                    <path d="M31.5 13.4 C29.5 12.6 28 12.8 26.5 13.8 M32 15 C30 15 28.8 15.8 27.8 17" fill="none" stroke-width="1.3"/>
+                    <!-- legs with claws -->
+                    <path d="M27 19.5 C26.6 22 25.6 23.4 24 24.8 M24 24.8 l-2.2 0.9 M24 24.8 l-0.2 2.4 M24 24.8 l1.8 1.5" fill="none" stroke-width="1.7"/>
+                    <path d="M12.5 23.5 C12.9 26 13.9 27.4 15.5 28.8 M15.5 28.8 l2.2 0.9 M15.5 28.8 l0.2 2.4 M15.5 28.8 l-1.8 1.5" fill="none" stroke-width="1.7"/>
+                    <path d="M12 33.5 C11.6 36 10.6 37.4 9 38.8 M9 38.8 l-2.2 0.9 M9 38.8 l-0.2 2.4 M9 38.8 l1.8 1.5" fill="none" stroke-width="1.7"/>
+                    <!-- tail flame -->
+                    <path d="M5 44 C3.2 42.8 2.6 40.8 3.2 38.6 M5 44 C6.4 41.8 6.2 39.8 5.4 37.8 M5 44 C3.4 45.4 1.8 45.8 0.4 45.4" fill="none" stroke-width="1.3"/>
+                    <!-- flaming pearl, out of reach beyond the jaws -->
+                    <circle cx="45" cy="2.8" r="2.2"/>
+                    <path d="M42 0.4 C43.4 -1.2 45.8 -1.6 47.4 -0.6" fill="none" stroke-width="1"/>
+                    <path d="M42.6 5.6 C44.6 6.6 46.8 6 47.8 4.4" fill="none" stroke-width="1"/>
+                  </g>
+                  <g stroke="#000" fill="none" stroke-linecap="round">
+                    <circle cx="34.8" cy="10.6" r="0.7" fill="#000" stroke="none"/>
+                    <path d="M12.6 30.6 q1.7 1 3.2 0.4 M10.4 25.6 q1.7 1.2 3.3 0.6 M16.4 21.9 q1.5 1.3 3.2 0.8 M22.4 20.9 q1.5 1.2 3.1 0.7" stroke-width="0.65"/>
+                    <path d="M12.2 36.4 q1.5 0.9 2.9 0.3" stroke-width="0.65"/>
+                  </g>
+                </mask></defs>
+                <rect x="-8" y="-8" width="64" height="64" fill="currentColor" mask="url(#mR)"/>
+              </svg>
+            <span class="label">Research</span>
+          </button>
+          <button class="pane" data-i="3" aria-label="Work" style="order: 1">
+            <span class="panim" data-anim="ox" style="--spd: 1.3s"></span>
+            <img class="pimg" src="/icons/ox.png?v=4" alt="" onerror="this.remove()">
+            <svg viewBox="0 0 48 48">
+                <defs><mask id="mE">
+                  <g stroke="#fff" fill="#fff" stroke-linecap="round" stroke-linejoin="round">
+                    <!-- body with high shoulder hump -->
+                    <path d="M8 27 C8 21 12 16.5 18 15.5 C23 14.7 28 15.5 31 18 C33.6 20.2 35 23 34.6 26.5 C34.2 30.5 31 33.5 26 34 L14 34 C10 33 8 30.5 8 27 Z" stroke-width="1"/>
+                    <!-- frontal papercut head -->
+                    <path d="M32 20 C34 18.6 38 18.6 40 20 C41.4 21.4 41.6 24 40.8 26.4 C40 28.8 38.4 30.2 36 30.2 C33.6 30.2 32 28.8 31.2 26.4 C30.4 24 30.6 21.4 32 20 Z" stroke-width="1"/>
+                    <!-- lyre horns curving out and up -->
+                    <path d="M32.5 19.8 C29.5 18.4 27.6 15.6 27.8 12.2" fill="none" stroke-width="2.8"/>
+                    <path d="M27.8 12.2 C27.9 10.6 28.6 9.4 29.8 8.6" fill="none" stroke-width="1.8"/>
+                    <path d="M39.5 19.8 C42.5 18.4 44.4 15.6 44.2 12.2" fill="none" stroke-width="2.8"/>
+                    <path d="M44.2 12.2 C44.1 10.6 43.4 9.4 42.2 8.6" fill="none" stroke-width="1.8"/>
+                    <!-- ears flaring under the horns -->
+                    <path d="M31.4 21 l-3.6 0.6 l2.8 1.8 z" stroke-width="1"/>
+                    <path d="M40.6 21 l3.6 0.6 l-2.8 1.8 z" stroke-width="1"/>
+                    <!-- sturdy legs -->
+                    <path d="M30 33 L32.5 43" fill="none" stroke-width="2.9"/>
+                    <path d="M25.5 34 L25.5 44" fill="none" stroke-width="2.9"/>
+                    <path d="M16 34 L13.5 43.5" fill="none" stroke-width="2.9"/>
+                    <path d="M20.5 34 L20 44" fill="none" stroke-width="2.9"/>
+                    <!-- hooves -->
+                    <path d="M31.9 43 l2.2 0.5 M24.4 44 l2.3 0.1 M12.6 43.4 l2.3 0.4 M18.9 44 l2.3 0.1" fill="none" stroke-width="1.5"/>
+                    <!-- tail -->
+                    <path d="M8.5 24 C6 26.5 5.5 30.5 6.8 34" fill="none" stroke-width="1.3"/>
+                    <path d="M6.8 34 C6 36 6.6 38 8.2 39.2 C8.9 37 8.8 35.6 8.1 33.8 Z" stroke-width="0.9"/>
+                  </g>
+                  <g stroke="#000" fill="none" stroke-linecap="round">
+                    <circle cx="34.2" cy="23.8" r="0.8" fill="#000" stroke="none"/>
+                    <circle cx="37.8" cy="23.8" r="0.8" fill="#000" stroke="none"/>
+                    <circle cx="35.1" cy="28" r="0.5" fill="#000" stroke="none"/>
+                    <circle cx="36.9" cy="28" r="0.5" fill="#000" stroke="none"/>
+                    <path d="M34.8 20.8 q1.2 -1 2.4 0" stroke-width="0.6"/>
+                    <path d="M27.5 17.5 q-4.5 4.5 -3 11" stroke-width="0.8"/>
+                    <path d="M16.5 17 q-3.5 4 -2 9.5" stroke-width="0.7"/>
+                    <path d="M30 31.5 q-4.5 2 -9.5 1.6" stroke-width="0.7"/>
+                  </g>
+                </mask></defs>
+                <rect x="-8" y="-8" width="64" height="64" fill="currentColor" mask="url(#mE)"/>
+              </svg>
+            <span class="label">Work</span>
+          </button>
+          <button class="pane" data-i="2" aria-label="Projects &amp; Awards" style="order: 4; grid-column: 2 / span 2">
+            <span class="panim" data-anim="horse" style="--spd: 0.9s"></span>
+            <img class="pimg" src="/icons/horse.png?v=4" alt="" onerror="this.remove()">
+            <svg viewBox="0 0 48 48">
+                <defs><mask id="mF">
+                  <g stroke="#fff" fill="#fff" stroke-linecap="round" stroke-linejoin="round">
+                    <!-- long body with deep chest -->
+                    <ellipse cx="22.5" cy="25.8" rx="11" ry="5.4" transform="rotate(-8 22.5 25.8)"/>
+                    <circle cx="29" cy="24.5" r="4.4"/>
+                    <!-- neck wedge -->
+                    <path d="M26.5 22.5 C29 20 31 17 32.8 13.6 L37.2 15.4 C35.4 19.2 33 22.4 29.6 25.2 Z" stroke-width="1"/>
+                    <!-- head with muzzle and jaw -->
+                    <path d="M32.8 13.6 C33.4 11.6 35 10.4 37 10.2 L42 9.8 L42.3 11.8 L38.2 13 L36.8 15.4 C35.2 15.9 33.6 15.2 32.8 13.6 Z" stroke-width="0.9"/>
+                    <!-- ears -->
+                    <path d="M34.6 10.8 l-0.2 -2.8 M36.4 10.3 l1.2 -2.5" fill="none" stroke-width="1.2"/>
+                    <!-- mane streaming from the crest -->
+                    <path d="M33 12.6 C30.2 10.8 27.4 10.4 24.6 11.2" fill="none" stroke-width="1.7"/>
+                    <path d="M31.6 15.2 C28.8 13.6 26 13.4 23.2 14.4" fill="none" stroke-width="1.7"/>
+                    <path d="M30 17.8 C27.4 16.4 24.8 16.4 22.2 17.4" fill="none" stroke-width="1.6"/>
+                    <!-- flying gallop -->
+                    <path d="M30.5 28.5 C34 29.6 36.8 28.6 39.4 25.8 M39.4 25.8 l3 -2" fill="none" stroke-width="2.1"/>
+                    <path d="M28.5 30.5 C31.8 32.2 35 32 38.2 30.4 M38.2 30.4 l3.2 -0.5" fill="none" stroke-width="2.1"/>
+                    <path d="M15.5 28.8 C11.8 30 8.6 32.2 5.8 32.4 M5.8 32.4 l-3 -0.5" fill="none" stroke-width="2.1"/>
+                    <path d="M17.5 30.8 C14.8 33.6 12 35.6 8.6 36.4 M8.6 36.4 l-3.1 0.3" fill="none" stroke-width="2.1"/>
+                    <!-- tail streaming -->
+                    <path d="M12 23.5 C7.5 21.8 4.5 22 1.5 20.8" fill="none" stroke-width="1.7"/>
+                    <path d="M11.8 25 C7 24.6 4 25.8 1 25.4" fill="none" stroke-width="1.7"/>
+                    <path d="M12 26.5 C8 28.2 5 29.8 2 29.8" fill="none" stroke-width="1.6"/>
+                  </g>
+                  <g stroke="#000" fill="none" stroke-linecap="round">
+                    <circle cx="35.6" cy="12.6" r="0.7" fill="#000" stroke="none"/>
+                    <circle cx="41" cy="10.9" r="0.45" fill="#000" stroke="none"/>
+                    <path d="M18.5 22.5 q3.5 2.5 8 2.6" stroke-width="0.75"/>
+                    <path d="M28.5 27.8 q-2.5 -1.2 -5 -0.8" stroke-width="0.7"/>
+                  </g>
+                </mask></defs>
+                <rect x="-8" y="-8" width="64" height="64" fill="currentColor" mask="url(#mF)"/>
+              </svg>
+            <span class="label">Projects &amp; Awards</span>
+          </button>
+          <button class="pane" data-i="4" aria-label="Writing" style="order: 3">
+            <span class="panim" data-anim="crane" style="--spd: 1.2s"></span>
+            <img class="pimg" src="/icons/crane.png?v=4" alt="" onerror="this.remove()">
+            <svg viewBox="0 0 48 48">
+                <defs><mask id="mW">
+                  <g stroke="#fff" fill="#fff" stroke-linecap="round" stroke-linejoin="round">
+                    <!-- horizontal body in flight -->
+                    <ellipse cx="20" cy="27" rx="8.8" ry="3.9" transform="rotate(-6 20 27)"/>
+                    <!-- neck reaching forward along the diagonal -->
+                    <path d="M27.5 25.5 C31.5 24 34.5 21.5 36.8 18.2" fill="none" stroke-width="1.8"/>
+                    <!-- head + long slim beak -->
+                    <ellipse cx="37.6" cy="17.2" rx="1.5" ry="1.2" transform="rotate(30 37.6 17.2)"/>
+                    <path d="M38.9 16.6 L46.5 13.4 L39.3 18.3 Z" stroke-width="0.6"/>
+                    <!-- raised wing: primaries all swept back -->
+                    <ellipse cx="20.5" cy="22.5" rx="4.2" ry="2.5" transform="rotate(-20 20.5 22.5)"/>
+                    <path d="M21.5 24 C16 19.5 10 17.8 4.5 18" fill="none" stroke-width="2.8"/>
+                    <path d="M21.5 24 C17 17.5 12.5 13.5 7.5 11.5" fill="none" stroke-width="2.6"/>
+                    <path d="M21.5 24 C19.5 15.5 17.5 10.5 14.5 6.5" fill="none" stroke-width="2.4"/>
+                    <path d="M21.5 24 C22.5 15 22.5 9.5 21.5 4.5" fill="none" stroke-width="2.2"/>
+                    <!-- tail feathers -->
+                    <path d="M11.5 25.6 l-6.4 0.4 M11.8 27.4 l-6.2 1.6" fill="none" stroke-width="1.8"/>
+                    <!-- legs trailing straight back -->
+                    <path d="M13.5 28.8 C9.5 29.6 5.5 30 2 29.8 M2 29.8 l-1.6 -0.3" fill="none" stroke-width="1.1"/>
+                    <path d="M14.5 30.4 C11 31.6 7.5 32.4 4 32.4 M4 32.4 l-1.7 0" fill="none" stroke-width="1.1"/>
+                  </g>
+                  <g stroke="#000" fill="none" stroke-linecap="round">
+                    <circle cx="37.3" cy="16.9" r="0.5" fill="#000" stroke="none"/>
+                    <path d="M36.6 16 a1.1 1.1 0 0 1 1.7 -0.5" stroke-width="0.7"/>
+                    <path d="M16 26 q3.8 2 8 1.2" stroke-width="0.75"/>
+                  </g>
+                </mask></defs>
+                <rect x="-8" y="-8" width="64" height="64" fill="currentColor" mask="url(#mW)"/>
+              </svg>
+            <span class="label">Writing</span>
+          </button>
+          <button class="pane" data-i="5" aria-label="Other" style="order: 5; grid-column: 4 / span 2">
+            <span class="panim" data-anim="koi" style="--spd: 1.1s"></span>
+            <img class="pimg" src="/icons/koi.png?v=4" alt="" onerror="this.remove()">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 34C14 26 22 20 32 18C36 17 40 17 43 19C41 22 38 25 34 27C26 31 17 34 10 34Z"/>
+              <path d="M10 34C7 36 5 39 4 42C8 41 11 39 13 36"/>
+              <path d="M32 18C33 14 36 11 40 10C39 13 39 16 37 18"/>
+              <path d="M34 27C36 30 39 32 42 33C40 29 39 27 38 25"/>
+              <path d="M20 28C22 26 25 24 28 23"/>
+              <path d="M24 31C26 29 29 27 32 26"/>
+              <path d="M40 20A0.8 0.8 0 1 0 40 21.6A0.8 0.8 0 1 0 40 20"/>
+            </svg>
+            <span class="label">Other</span>
+          </button>
+        </div>
+      </div>
+    </section>
+    <section class="slide" id="s1">
+      <div class="inner">
+        <h2>Research</h2>
+        <ul class="worklist compact">
+          <li><button class="item" data-p="a2a">agent-to-agent manipulation</button><span class="note">can a lying AI sway a truthful one?</span></li>
+          <li><button class="item" data-p="loyalties">secret loyalties in multi-agent systems</button><span class="note">Apart Research</span></li>
+          <li><button class="item" data-p="lbyc">look before you click</button><span class="note">AI control for computer-use agents, Apart Research</span></li>
+        </ul>
+        <p class="subline">AI safety &amp; alignment research.</p>
+      </div>
+    </section>
+    <section class="slide" id="s2">
+      <div class="inner">
+        <h2>Projects &amp; Awards</h2>
+        <ul class="worklist compact">
+          <li><button class="item" data-p="clipper">Clipper</button><span class="note">1st place, TartanHacks · $5k AppLovin track</span></li>
+          <li><button class="item" data-p="cortex">Cortex Cam</button><span class="note">1st place, HackCMU</span></li>
+          <li><button class="item" data-p="rotoscoper">Rotoscoper</button><span class="note">video editor project</span></li>
+          <li><span>CASI &times; Gray Swan Jailbreakathon winner</span></li>
+          <li><span>MARS V finalist &middot; MATS finalist</span><span class="note">AI safety programs</span></li>
+        </ul>
+        <p class="subline">things I've built and recognition along the way.</p>
+      </div>
+    </section>
+    <section class="slide" id="s3">
+      <div class="inner">
+        <h2>Work</h2>
+        <ul class="worklist compact">
+          <li><button class="item" data-p="phoebe">AI Engineer @ Phoebe</button><span class="note">building digital workers to coordinate the physical economy</span></li>
+          <li><button class="item" data-p="perfit">Founding Engineer / CMO @ Perfit</button><span class="note">80k on waitlist</span></li>
+          <li><button class="item" data-p="cmode">Software Engineer @ CreativeMode</button><span class="note">YC S24</span></li>
+          <li><button class="item" data-p="treffa">Founding Engineer / CMO @ Treffa</button><span class="note">100k+ users, 500M+ views</span></li>
+        </ul>
+        <p class="subline">building AI products, agents, and the infrastructure under them.</p>
+      </div>
+    </section>
+    <section class="slide" id="s4">
+      <div class="inner">
+        <h2>Writing</h2>
+        <ul class="worklist compact">
+          <li><button class="item" data-p="weakest">agentic systems are only as safe as their weakest&nbsp;link</button></li>
+          <li><button class="item" data-p="fragility">the fragility of reality</button><span class="note">synthetic consensus &amp; digital trust</span></li>
+          <li><button class="item" data-p="fa">f(a) = agents as a function</button><span class="note">for Phoebe</span></li>
+          <li><button class="item" data-p="nondet">a reflection on nondeterministic evals</button><span class="note">for Phoebe</span></li>
+        </ul>
+        <p class="subline">more at <a href="https://marginsofintelligence.com">marginsofintelligence.com</a></p>
+      </div>
+    </section>
+    <section class="slide" id="s5">
+      <div class="inner">
+        <h2>Other</h2>
+        <ul class="worklist compact">
+          <li><button class="item" data-p="film">short film maker</button><span class="note">30M+ views across platforms</span></li>
+        </ul>
+      </div>
+    </section>
+    <section class="slide" id="s6">
+      <div class="inner">
+        <h2>Contact</h2>
+        <p class="contact-line">
+          <a href="mailto:keeganrwang@gmail.com">keeganrwang@gmail.com</a>
+          &nbsp;·&nbsp;
+          <a href="https://github.com/keegan-wang">GitHub</a>
+          &nbsp;·&nbsp;
+          <a href="https://www.linkedin.com/in/keegan-wang-69b683241/">LinkedIn</a>
+          &nbsp;·&nbsp;
+          <a href="https://x.com/WangKeegan">X</a>
+        </p>
+        <p class="fin">fin.</p>
+      </div>
+    </section>
+    <section class="slide" id="sd">
+      <div class="inner">
+        <h2 id="dsection">&nbsp;</h2>
+        <div class="detail-title" id="dtitle"></div>
+        <div id="dstats" style="display: none"></div>
+        <div class="detail-prose" id="dprose"></div>
+        <div id="dembed" style="display: none"></div>
+        <div class="plinks" id="dlinks"></div>
+      </div>
+    </section>
+    <div id="zoomer" aria-hidden="true"></div>
+    <div id="cinema" class="closed" aria-hidden="true">
+      <video id="cinevid" playsinline></video>
+      <div class="cine-grain" aria-hidden="true"></div>
+      <div class="cine-vignette" aria-hidden="true"></div>
+      <button id="cineclose" aria-label="Close">&times;</button>
     </div>
-  </section>
-
-  <section class="moment" id="m-work">
-    <div class="inner">
-      <h2>Work</h2>
-      <ul class="worklist">
-        <li><a href="https://phoebe.work">Phoebe</a><span class="note">what I'm building now</span></li>
-        <li><span class="soon">more soon</span></li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="moment" id="m-about">
-    <div class="inner">
-      <h2>About</h2>
-      <p class="prose">
-        I'm Keegan — an engineer drawn to cameras, generative video,
-        and tools for people who make <em>moving images</em>.
-        This site is a dark room with one good light.
-      </p>
-    </div>
-  </section>
-
-  <section class="moment" id="m-contact">
-    <div class="inner">
-      <h2>Contact</h2>
-      <p class="contact-line">
-        <a href="mailto:keegan@phoebe.work">keegan@phoebe.work</a>
-        &nbsp;·&nbsp;
-        <a href="https://github.com/keegan-wang">GitHub</a>
-      </p>
-      <p class="fin">fin.</p>
-    </div>
-  </section>
-
-  <div class="scroll-cue" id="cue">Scroll</div>
-  <div class="spacer" aria-hidden="true"></div>
+  </div>
 
   <noscript>
-    <style>.moment{position:relative;inset:auto;opacity:1;pointer-events:auto;min-height:60vh}.spacer,.scroll-cue{display:none}</style>
+    <style>
+      #frame{position:relative;width:min(92vw,60rem);margin:5rem auto;background:#f4c98f;border-radius:4px}
+      .slide{position:relative;opacity:1;pointer-events:auto;padding:3rem 8%}
+      body{overflow:auto}
+      .pnav,#panes{display:none}
+    </style>
   </noscript>
 
   <script type="importmap">
@@ -270,10 +583,9 @@
     import * as THREE from 'three';
 
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const container = document.getElementById('scene');
     let renderer;
     try {
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+      renderer = new THREE.WebGLRenderer({ antialias: true });
     } catch (e) {
       document.documentElement.classList.add('flat');
     }
@@ -281,237 +593,849 @@
     if (renderer) {
       renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
       renderer.setSize(innerWidth, innerHeight);
-      renderer.setClearColor(0x0c0806, 1);
-      container.appendChild(renderer.domElement);
+      document.getElementById('scene').appendChild(renderer.domElement);
 
       const scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x0c0806, 0.045);
-      const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.1, 100);
+      const CAM_REST = new THREE.Vector3(0, 0.15, 7.2);
+      const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 60);
+      camera.position.copy(CAM_REST);
 
-      // ---- volumetric beam (two nested cones, custom falloff shader) ----
-      const beamGroup = new THREE.Group();
-      const SOURCE = new THREE.Vector3(-7.5, 6.5, -6);
-      const AIM = new THREE.Vector3(2.2, -3.2, 3.2);
-      const dir = AIM.clone().sub(SOURCE).normalize();
-      beamGroup.position.copy(SOURCE);
-      beamGroup.quaternion.setFromUnitVectors(new THREE.Vector3(0, -1, 0), dir);
-      scene.add(beamGroup);
+      // ---- the wall, lit by an unseen projector behind the viewer ----
+      const rectC = new THREE.Vector2(0, 0.18); // fixed in wall space
+      const rectH = new THREE.Vector2(2.3, 1.294);
+      const wallMat = new THREE.ShaderMaterial({
+        uniforms: {
+          uWallColor: { value: new THREE.Color(0x120b07) },
+          uLightColor: { value: new THREE.Color(1.12, 0.92, 0.68) },
+          uRectC: { value: new THREE.Vector2() },
+          uRectH: { value: rectH },
+          uLight: { value: 0 },
+          uCursor: { value: new THREE.Vector2(99, 99) },
+          uCursorOn: { value: 0 },
+          uTime: { value: 0 },
+        },
+        vertexShader: `
+          varying vec2 vPos;
+          void main() {
+            vPos = position.xy;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }`,
+        fragmentShader: `
+          uniform vec3 uWallColor, uLightColor;
+          uniform vec2 uRectC, uRectH, uCursor;
+          uniform float uLight, uCursorOn, uTime;
+          varying vec2 vPos;
+          float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+          float noise(vec2 p) {
+            vec2 i = floor(p), f = fract(p);
+            vec2 u = f * f * (3.0 - 2.0 * f);
+            return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x),
+                       mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y);
+          }
+          float fbm(vec2 p) {
+            float v = 0.0, a = 0.5;
+            for (int i = 0; i < 3; i++) { v += a * noise(p); p *= 2.03; a *= 0.5; }
+            return v;
+          }
+          float box(vec2 p, vec2 c, vec2 h, float s) {
+            vec2 d = abs(p - c) - h;
+            return 1.0 - smoothstep(-s, s, max(d.x, d.y));
+          }
+          void main() {
+            vec2 p = vPos;
+            // plaster
+            float tex = fbm(p * 2.1) * 0.55 + fbm(p * 9.5) * 0.45;
+            vec3 col = uWallColor * (0.8 + 0.4 * tex);
+            // projected rectangle with a soft edge and slight chromatic fringe
+            float mR = box(p, uRectC, uRectH * 1.004, 0.055);
+            float mG = box(p, uRectC, uRectH, 0.055);
+            float mB = box(p, uRectC, uRectH * 0.996, 0.055);
+            // hotspot falloff toward the corners
+            vec2 q = (p - uRectC) / uRectH;
+            float hot = 1.0 - 0.26 * dot(q, q);
+            // cursor blocks the beam
+            float cd = dot(p - uCursor, p - uCursor);
+            float sh = 1.0 - uCursorOn * 0.55 * exp(-cd / 0.018);
+            // living light: fine shimmer like film grain in the gate
+            float shimmer = 0.95 + 0.05 * noise(p * 42.0 + uTime * 1.6);
+            float spill = box(p, uRectC, uRectH * 1.3, 1.1) * 0.14;
+            vec3 light = uLightColor * (vec3(mR, mG, mB) * hot * sh * shimmer + spill) * uLight;
+            col += light;
+            col *= 1.0 - 0.32 * smoothstep(3.0, 9.5, length(p - vec2(0.0, 0.2)));
+            gl_FragColor = vec4(col, 1.0);
+          }`,
+      });
+      const wall = new THREE.Mesh(new THREE.PlaneGeometry(60, 36), wallMat);
+      scene.add(wall);
 
-      const H = 22;
-      function makeBeam(r0, r1, intensity, exponent) {
-        const geo = new THREE.CylinderGeometry(r0, r1, H, 64, 24, true);
-        geo.translate(0, -H / 2, 0);
+      // ---- dust drifting through the beam between viewer and wall ----
+      const PROJ = new THREE.Vector3(0, 2.7, 10.5); // the unseen projector, over your shoulder
+      const dotCanvas = document.createElement('canvas');
+      dotCanvas.width = dotCanvas.height = 64;
+      const dctx = dotCanvas.getContext('2d');
+      const dgrad = dctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+      dgrad.addColorStop(0, 'rgba(255, 228, 190, 1)');
+      dgrad.addColorStop(1, 'rgba(255, 228, 190, 0)');
+      dctx.fillStyle = dgrad;
+      dctx.fillRect(0, 0, 64, 64);
+
+      const COUNT = innerWidth < 700 ? 220 : 420;
+      const positions = new Float32Array(COUNT * 3);
+      const seedArr = new Float32Array(COUNT);
+      const drift = [];
+      for (let i = 0; i < COUNT; i++) {
+        positions[i * 3] = (Math.random() - 0.5) * 8;
+        positions[i * 3 + 1] = (Math.random() - 0.5) * 5 + 0.5;
+        positions[i * 3 + 2] = 0.3 + Math.random() * 6;
+        seedArr[i] = Math.random();
+        drift.push({
+          vx: (Math.random() - 0.5) * 0.05,
+          vy: (Math.random() - 0.5) * 0.03,
+          wob: Math.random() * Math.PI * 2,
+        });
+      }
+      const dustGeo = new THREE.BufferGeometry();
+      dustGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      dustGeo.setAttribute('aSeed', new THREE.BufferAttribute(seedArr, 1));
+      const dustMat = new THREE.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        uniforms: {
+          uProj: { value: PROJ },
+          uRectC: { value: wallMat.uniforms.uRectC.value },
+          uRectH: { value: rectH },
+          uLight: { value: 0 },
+          uTime: { value: 0 },
+          uMap: { value: new THREE.CanvasTexture(dotCanvas) },
+        },
+        vertexShader: `
+          uniform vec3 uProj;
+          uniform vec2 uRectC, uRectH;
+          uniform float uLight, uTime;
+          attribute float aSeed;
+          varying float vA;
+          void main() {
+            // where the projector ray through this mote lands on the wall
+            float t = uProj.z / max(uProj.z - position.z, 0.001);
+            vec2 hit = uProj.xy + (position.xy - uProj.xy) * t;
+            vec2 d = abs(hit - uRectC) - uRectH;
+            float lit = 1.0 - smoothstep(-0.12, 0.3, max(d.x, d.y));
+            float tw = 0.55 + 0.45 * sin(uTime * (0.7 + aSeed * 1.6) + aSeed * 19.0);
+            vA = lit * uLight * tw;
+            vec4 mv = modelViewMatrix * vec4(position, 1.0);
+            gl_PointSize = (620.0 / -mv.z) * (0.014 + 0.02 * aSeed);
+            gl_Position = projectionMatrix * mv;
+          }`,
+        fragmentShader: `
+          uniform sampler2D uMap;
+          varying float vA;
+          void main() {
+            vec4 tex = texture2D(uMap, gl_PointCoord);
+            gl_FragColor = vec4(tex.rgb, tex.a * vA * 0.75);
+          }`,
+      });
+      const dust = new THREE.Points(dustGeo, dustMat);
+      scene.add(dust);
+
+      // ---- the projector: a dark silhouette on its tripod, just in front of us ----
+      const silMat = new THREE.ShaderMaterial({
+        side: THREE.DoubleSide,
+        uniforms: {
+          uLight: { value: 0 },
+          uWarm: { value: new THREE.Color(1.0, 0.72, 0.46) },
+        },
+        vertexShader: `
+          varying vec3 vN, vV;
+          void main() {
+            vec4 mv = modelViewMatrix * vec4(position, 1.0);
+            vN = normalize(normalMatrix * normal);
+            vV = normalize(-mv.xyz);
+            gl_Position = projectionMatrix * mv;
+          }`,
+        fragmentShader: `
+          uniform float uLight;
+          uniform vec3 uWarm;
+          varying vec3 vN, vV;
+          void main() {
+            vec3 n = normalize(vN);
+            // near-black mass with a faint warm rim where the beam grazes it
+            float rim = pow(1.0 - abs(dot(n, normalize(vV))), 2.4);
+            float up = max(dot(n, normalize(vec3(0.0, 0.6, 0.8))), 0.0);
+            vec3 col = vec3(0.016, 0.010, 0.007)
+                     + uWarm * (rim * 0.14 + pow(up, 2.0) * 0.045) * uLight;
+            gl_FragColor = vec4(col, 1.0);
+          }`,
+      });
+
+      const projectorG = new THREE.Group();
+      projectorG.scale.setScalar(0.7);
+      scene.add(projectorG);
+
+      const body = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.13, 0.27), silMat);
+      const snout = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.037, 0.11, 20), silMat);
+      snout.rotation.x = Math.PI / 2;
+      snout.position.set(0, 0.012, 0.185);
+      projectorG.add(body, snout);
+
+      // spoked reels that actually turn
+      function makeReel(R, filmR) {
+        const holder = new THREE.Group();
+        holder.rotation.y = Math.PI / 2; // disc stands in the film plane
+        const spinner = new THREE.Group();
+        const ring = new THREE.Mesh(new THREE.TorusGeometry(R, 0.007, 8, 42), silMat);
+        const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.013, 0.013, 0.022, 12), silMat);
+        hub.rotation.x = Math.PI / 2;
+        spinner.add(ring, hub);
+        for (let i = 0; i < 3; i++) {
+          const spoke = new THREE.Mesh(new THREE.BoxGeometry(R * 2 - 0.012, 0.013, 0.007), silMat);
+          spoke.rotation.z = (i * Math.PI) / 3;
+          spinner.add(spoke);
+        }
+        const film = new THREE.Mesh(new THREE.CylinderGeometry(filmR, filmR, 0.014, 26), silMat);
+        film.rotation.x = Math.PI / 2;
+        spinner.add(film);
+        holder.add(spinner);
+        return { holder, spinner };
+      }
+      const reelFront = makeReel(0.08, 0.05);
+      reelFront.holder.position.set(0, 0.165, 0.075);
+      const reelBack = makeReel(0.07, 0.028);
+      reelBack.holder.position.set(0, 0.16, -0.095);
+      const armF = new THREE.Mesh(new THREE.BoxGeometry(0.013, 0.1, 0.02), silMat);
+      armF.position.set(0, 0.095, 0.075);
+      const armB = armF.clone();
+      armB.position.z = -0.095;
+      projectorG.add(reelFront.holder, reelBack.holder, armF, armB);
+
+      // tripod
+      const column = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.1, 10), silMat);
+      column.position.y = -0.11;
+      projectorG.add(column);
+      const legGeo = new THREE.CylinderGeometry(0.01, 0.006, 0.7, 8);
+      legGeo.translate(0, -0.35, 0);
+      const DOWN = new THREE.Vector3(0, -1, 0);
+      [0.6, 2.7, 4.5].forEach((az) => {
+        const leg = new THREE.Mesh(legGeo, silMat);
+        const tilt = 0.42;
+        const d = new THREE.Vector3(Math.sin(az) * Math.sin(tilt), -Math.cos(tilt), Math.cos(az) * Math.sin(tilt));
+        leg.quaternion.setFromUnitVectors(DOWN, d);
+        leg.position.y = -0.15;
+        projectorG.add(leg);
+      });
+
+      // the bright point at the lens, and the cone of light it throws
+      const glowCanvas = document.createElement('canvas');
+      glowCanvas.width = glowCanvas.height = 128;
+      const gctx = glowCanvas.getContext('2d');
+      const ggrad = gctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+      ggrad.addColorStop(0, 'rgba(255, 235, 200, 1)');
+      ggrad.addColorStop(0.3, 'rgba(255, 205, 145, 0.5)');
+      ggrad.addColorStop(1, 'rgba(255, 190, 120, 0)');
+      gctx.fillStyle = ggrad;
+      gctx.fillRect(0, 0, 128, 128);
+      const lensGlow = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: new THREE.CanvasTexture(glowCanvas),
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        transparent: true,
+      }));
+      lensGlow.scale.setScalar(0.2);
+      lensGlow.position.set(0, 0.012, 0.25);
+      projectorG.add(lensGlow);
+
+      function makeCone(r0, r1, exponent) {
+        const geo = new THREE.CylinderGeometry(r0, r1, 1, 48, 20, true);
+        geo.translate(0, -0.5, 0);
         const mat = new THREE.ShaderMaterial({
           transparent: true,
           depthWrite: false,
           side: THREE.DoubleSide,
           blending: THREE.AdditiveBlending,
           uniforms: {
-            uColor: { value: new THREE.Color(0xffb877) },
-            uIntensity: { value: intensity },
+            uColor: { value: new THREE.Color(1.0, 0.8, 0.56) },
+            uIntensity: { value: 0 },
             uTime: { value: 0 },
-            uH: { value: H },
             uExp: { value: exponent },
           },
           vertexShader: `
-            uniform float uH;
             varying float vT; varying vec3 vN; varying vec3 vV;
             void main() {
-              vT = -position.y / uH;
+              vT = -position.y;
               vec4 mv = modelViewMatrix * vec4(position, 1.0);
               vN = normalize(normalMatrix * normal);
               vV = normalize(-mv.xyz);
               gl_Position = projectionMatrix * mv;
             }`,
           fragmentShader: `
-            uniform vec3 uColor; uniform float uIntensity; uniform float uTime; uniform float uExp;
+            uniform vec3 uColor; uniform float uIntensity, uTime, uExp;
             varying float vT; varying vec3 vN; varying vec3 vV;
             void main() {
               float edge = pow(abs(dot(vN, vV)), uExp);
-              float len = smoothstep(0.0, 0.10, vT) * (1.0 - smoothstep(0.42, 1.0, vT));
-              float flicker = 0.95 + 0.05 * sin(uTime * 1.1 + sin(uTime * 0.63) * 2.1);
-              gl_FragColor = vec4(uColor, edge * len * flicker * uIntensity);
+              float len = smoothstep(0.02, 0.14, vT) * (1.0 - smoothstep(0.5, 0.97, vT));
+              float flick = 0.95 + 0.05 * sin(uTime * 1.2 + vT * 6.0);
+              gl_FragColor = vec4(uColor, edge * len * flick * uIntensity);
             }`,
         });
-        const mesh = new THREE.Mesh(geo, mat);
-        beamGroup.add(mesh);
-        return mat;
+        return { mesh: new THREE.Mesh(geo, mat), mat };
       }
-      const beamCore = makeBeam(0.28, 3.4, 0.34, 2.6);
-      const beamHalo = makeBeam(0.55, 5.2, 0.12, 1.6);
+      const coneA = makeCone(0.05, 1.75, 2.4);
+      const coneB = makeCone(0.1, 2.5, 1.5);
+      const beamG = new THREE.Group();
+      beamG.add(coneA.mesh, coneB.mesh);
+      scene.add(beamG);
 
-      // glow at the source
-      const glowCanvas = document.createElement('canvas');
-      glowCanvas.width = glowCanvas.height = 256;
-      const gctx = glowCanvas.getContext('2d');
-      const grad = gctx.createRadialGradient(128, 128, 0, 128, 128, 128);
-      grad.addColorStop(0, 'rgba(255, 224, 178, 1)');
-      grad.addColorStop(0.25, 'rgba(255, 195, 130, 0.55)');
-      grad.addColorStop(1, 'rgba(255, 184, 119, 0)');
-      gctx.fillStyle = grad;
-      gctx.fillRect(0, 0, 256, 256);
-      const glow = new THREE.Sprite(new THREE.SpriteMaterial({
-        map: new THREE.CanvasTexture(glowCanvas),
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-        transparent: true,
-      }));
-      glow.scale.setScalar(5.5);
-      beamGroup.add(glow);
-
-      // ---- dust motes drifting inside the beam ----
-      const dotCanvas = document.createElement('canvas');
-      dotCanvas.width = dotCanvas.height = 64;
-      const dctx = dotCanvas.getContext('2d');
-      const dgrad = dctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-      dgrad.addColorStop(0, 'rgba(255, 232, 198, 1)');
-      dgrad.addColorStop(1, 'rgba(255, 232, 198, 0)');
-      dctx.fillStyle = dgrad;
-      dctx.fillRect(0, 0, 64, 64);
-
-      const isMobile = innerWidth < 700;
-      const COUNT = isMobile ? 320 : 620;
-      const positions = new Float32Array(COUNT * 3);
-      const seeds = [];
-      for (let i = 0; i < COUNT; i++) {
-        seeds.push({
-          t: 0.06 + Math.random() * 0.88,
-          ang: Math.random() * Math.PI * 2,
-          rad: Math.sqrt(Math.random()) * 0.92,
-          spin: (Math.random() - 0.5) * 0.12,
-          rise: (Math.random() - 0.5) * 0.008,
-          wob: Math.random() * Math.PI * 2,
-        });
-      }
-      const dustGeo = new THREE.BufferGeometry();
-      dustGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      const dustMat = new THREE.PointsMaterial({
-        map: new THREE.CanvasTexture(dotCanvas),
-        size: 0.055,
-        transparent: true,
-        opacity: 0.6,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-        sizeAttenuation: true,
-      });
-      const dust = new THREE.Points(dustGeo, dustMat);
-      beamGroup.add(dust);
-
-      function layoutDust(time) {
-        for (let i = 0; i < COUNT; i++) {
-          const s = seeds[i];
-          const t = s.t;
-          const r = (0.28 + t * 3.1) * s.rad * (1 + 0.04 * Math.sin(time * 0.4 + s.wob));
-          const a = s.ang + time * s.spin;
-          positions[i * 3] = Math.cos(a) * r;
-          positions[i * 3 + 1] = -t * H;
-          positions[i * 3 + 2] = Math.sin(a) * r;
-          s.t += s.rise * 0.016;
-          if (s.t < 0.05) s.t = 0.94;
-          if (s.t > 0.95) s.t = 0.06;
-        }
-        dustGeo.attributes.position.needsUpdate = true;
-      }
-      layoutDust(0);
-
-      // ---- scroll choreography ----
-      // camera keyframes per moment: [position, lookAt, beam intensity multiplier]
-      const KEYS = [
-        { pos: new THREE.Vector3(0, 0.6, 9.0), look: new THREE.Vector3(0, 0.4, 0), beam: 1.0 },
-        { pos: new THREE.Vector3(2.3, 0.9, 6.6), look: new THREE.Vector3(-0.4, 0.2, 0), beam: 0.8 },
-        { pos: new THREE.Vector3(-1.9, 0.4, 5.4), look: new THREE.Vector3(0.5, 0.3, 0), beam: 0.62 },
-        { pos: new THREE.Vector3(0, 0.1, 4.2), look: new THREE.Vector3(0, 0.5, -1), beam: 0.34 },
-      ];
-      const MOMENTS = [
-        { el: document.getElementById('m-hero'), p: 0.0 },
-        { el: document.getElementById('m-work'), p: 0.36 },
-        { el: document.getElementById('m-about'), p: 0.68 },
-        { el: document.getElementById('m-contact'), p: 1.0 },
-      ];
-      const WIDTH = 0.15; // half-width of each moment's visibility window
-
-      const ease = (t) => 0.5 - 0.5 * Math.cos(Math.PI * Math.min(Math.max(t, 0), 1));
-      const camPos = KEYS[0].pos.clone();
-      const camLook = KEYS[0].look.clone();
-      const targetPos = new THREE.Vector3();
-      const targetLook = new THREE.Vector3();
-      let beamLevel = 1;
-      let mouseX = 0, mouseY = 0;
-
-      function progress() {
-        const max = document.documentElement.scrollHeight - innerHeight;
-        return max > 0 ? scrollY / max : 0;
+      const lensWorld = new THREE.Vector3();
+      const beamDir = new THREE.Vector3();
+      function aimProjector() {
+        // keep the projector at the lower right, tucked in on narrow screens
+        const halfW145 = Math.tan(THREE.MathUtils.degToRad(22.5)) * 1.45 * camera.aspect;
+        projectorG.position.set(Math.min(0.52, halfW145 * 0.75), -0.21, 5.75);
+        projectorG.lookAt(rectC.x, rectC.y, 0);
+        projectorG.updateMatrixWorld(true);
+        lensWorld.set(0, 0.012, 0.26);
+        projectorG.localToWorld(lensWorld);
+        beamG.position.copy(lensWorld);
+        beamDir.set(rectC.x, rectC.y, 0).sub(lensWorld);
+        beamG.quaternion.setFromUnitVectors(DOWN, beamDir.clone().normalize());
+        beamG.scale.set(1, beamDir.length(), 1);
+        dustMat.uniforms.uProj.value.copy(lensWorld);
       }
 
-      function keyframeAt(p) {
-        const stops = MOMENTS.map((m) => m.p);
-        let i = 0;
-        while (i < stops.length - 2 && p > stops[i + 1]) i++;
-        const t = ease((p - stops[i]) / (stops[i + 1] - stops[i]));
-        targetPos.lerpVectors(KEYS[i].pos, KEYS[i + 1].pos, t);
-        targetLook.lerpVectors(KEYS[i].look, KEYS[i + 1].look, t);
-        return KEYS[i].beam + (KEYS[i + 1].beam - KEYS[i].beam) * t;
-      }
-
-      function updateMoments(p) {
-        for (const m of MOMENTS) {
-          const d = Math.abs(p - m.p) / WIDTH;
-          const o = Math.max(0, 1 - d);
-          const eased = o * o * (3 - 2 * o);
-          m.el.style.opacity = eased.toFixed(3);
-          m.el.style.transform = `translateY(${((p - m.p) / WIDTH) * -26}px)`;
-          m.el.classList.toggle('active', eased > 0.5);
-        }
-        document.getElementById('cue').style.opacity = p < 0.02 ? 1 : 0;
-      }
-
-      addEventListener('pointermove', (e) => {
-        mouseX = (e.clientX / innerWidth) * 2 - 1;
-        mouseY = (e.clientY / innerHeight) * 2 - 1;
-      }, { passive: true });
-
-      addEventListener('resize', () => {
+      // ---- layout: size the projected rect to the viewport, track DOM to it ----
+      const frame = document.getElementById('frame');
+      let baseW = 1000, baseH = 562;
+      function layout() {
         camera.aspect = innerWidth / innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(innerWidth, innerHeight);
-        if (reduced) renderFrame(0);
+        const halfH = Math.tan(THREE.MathUtils.degToRad(22.5)) * CAM_REST.z;
+        const halfW = halfH * camera.aspect;
+        const portrait = innerHeight > innerWidth;
+        const ratio = portrait ? 5 / 4 : 9 / 16; // taller slide on phones
+        let hx = Math.min(portrait ? 3.0 : 4.6, halfW * 0.9);
+        let hy = hx * ratio;
+        if (hy > halfH * 0.82) { hy = halfH * 0.82; hx = hy / ratio; }
+        rectH.set(hx, hy);
+        // straight-on camera: wall units map linearly to pixels at the rest pose
+        baseW = (hx / halfW) * innerWidth;
+        baseH = (hy / halfH) * innerHeight;
+        frame.style.width = baseW + 'px';
+        frame.style.height = baseH + 'px';
+        frame.style.fontSize = (baseW / 54) * (baseW < 620 ? 1.3 : 1) + 'px';
+        aimProjector();
+      }
+      layout();
+      addEventListener('resize', () => { layout(); if (reduced) renderFrame(2); });
+
+      // ---- carousel mechanics: discrete slides, mechanical changes ----
+      const slides = [...document.querySelectorAll('.slide')];
+      const DETAIL = slides.length - 1; // #sd, the item-detail page
+      const menuBtns = [...document.querySelectorAll('button[data-i]')];
+      const pname = document.querySelector('.pname');
+      const pback = document.querySelector('.pback');
+
+      // ---- item detail panels ----
+      const PANELS = {
+        a2a: {
+          title: 'Agent-to-agent manipulation',
+          body: 'Language models are increasingly deployed in agentic systems that delegate tasks and synthesize outputs across multiple agents. This leaves a critical vulnerability of misalignment in a system by the corruption of a weak sub-agent. In a series of escalating experiments, we find the subject model, its access to evidence, and the delivery channel through which information is passed to be the most critical vulnerabilities.\n\nIn our tests, frontier models reject a fabricated source on every trial when a peer agent asserts it, yet accept the identical fabrication on up to 93% of trials when it returns as a delegated sub-agent’s tool result — demonstrating that the safety of real-world agentic systems that use strong orchestrator agents and weaker sub-agents is defined not by the safety of the strong agent but by the safety of the weaker agents. This finding and our suggested remedies are instrumental as agentic systems continue to scale in their delegation.',
+          links: [
+            ['Read the research log', 'https://marginsofintelligence.com/research-logs/agent-to-agent-manipulation'],
+            ['Code & data', 'https://github.com/keegan-wang/a2a-manipulation'],
+          ],
+        },
+        loyalties: {
+          title: 'Secret loyalties in multi-agent systems',
+          body: 'While previous work has demonstrated that model organisms can learn secret loyalties activated by token or contextual triggers, this paper introduces a critical new attack vector: environmental triggers. Building on evidence that models can infer features of their environment, we demonstrate that an inferred environment can itself activate a secret loyalty that remains dormant under conventional evaluation.\n\nWe study this threat in multi-agent systems (MAS), a rapidly expanding deployment architecture. We constructed environmental secret loyalties through prompting GPT-5.6 and supervised fine-tuning Qwen 2.5-7B on 19,600 examples. These organisms produced environment effects of +0.562 and +0.404, respectively, relative to matched solo conditions. We further introduce a model-agnostic evaluation engine designed to detect these loyalties across 23,580 benchmark episodes. Our findings establish environmental triggers as a new class of secret-loyalty attack vectors and a consequential priority for AI safety research.',
+          links: [['Project page at Apart Research', 'https://apartresearch.com/project/activating-secret-loyalties-through-environmental-triggers-2xd5']],
+        },
+        lbyc: {
+          title: 'Look before you click',
+          body: 'Co-authored an AI control research project on computer-use agent safety, evaluating sparse critical-action review: catching high-risk GUI actions for review before they execute.\n\nBuilt a review pipeline using live screenshots, accessibility-tree state, and recent action history to support state-grounded intervention. Written for Apart Research’s AI Control research sprint, 2026.',
+          links: [
+            ['lookbeforeyouclick.com', 'https://lookbeforeyouclick.com/'],
+            ['Apart Research AI Control sprint', 'https://apartresearch.com/sprints/ai-control-hackathon-2026-03-20-to-2026-03-22'],
+          ],
+        },
+        agai: {
+          title: 'Zero-trust authentication for AI agents',
+          body: 'Undergraduate researcher with Carnegie Mellon’s Applied Generative AI Group, researching the security, reliability, and scalability of multi-agent systems through zero-trust authentication mechanisms for collaborative AI agents.',
+          links: [],
+        },
+        phoebe: {
+          title: 'AI Engineer @ Phoebe',
+          body: 'Building digital workers to coordinate the physical economy.\n\nFounded Phoebe Garden, Phoebe’s AI research arm researching agent systems and agent interactions. Built out in-learning personalization optimization on an organization basis, and built out evaluations and benchmarks for scheduling agents.',
+          links: [
+            ['phoebe.work', 'https://phoebe.work'],
+            ['f(a) = agents as a function', 'https://www.phoebe.work/garden/subagents-shared-state-execution-graphs'],
+            ['a reflection on nondeterministic evals', 'https://www.phoebe.work/garden/evals-for-subjective-agents'],
+          ],
+        },
+        treffa: {
+          title: 'Founding Engineer / CMO @ Treffa',
+          body: 'Scaled a social shopping app to 100k+ users and 500M+ social media views through data-driven content and product systems.',
+          links: [],
+        },
+        cmode: {
+          title: 'Software Engineer @ CreativeMode',
+          body: 'CreativeMode (YC S24) lets players create mods for their favorite games without writing code, starting with Minecraft — putting the power of a game studio at every player’s fingertips.\n\nDesigned and implemented a distributed multi-agent AI pipeline orchestrated with Rust services and Kubernetes, dynamically spawning per-task servers to handle concurrent AI editing jobs.',
+          links: [],
+        },
+        perfit: {
+          title: 'Founding Engineer / Chief Marketing Officer @ Perfit',
+          body: 'Built GTM software and an AI video editor that created 25 videos per day, helping grow the waitlist to 80,000 people.',
+          links: [],
+        },
+        cortex: {
+          title: 'Cortex Cam',
+          body: 'First place at HackCMU. An all-in-one system that tracks your daily activities through Meta glasses and estimates which parts of your brain you’re engaging — a visualization of your cognitive balance. Built with Aryan Pandalai, Harsh Akunuri, and Austin Chan.',
+          links: [['The announcement', 'https://www.linkedin.com/posts/keegan-wang-69b683241_excited-to-share-that-my-team-and-i-won-1st-activity-7373398991172071424-Wfd7']],
+        },
+        clipper: {
+          title: 'Clipper',
+          body: 'First place at TartanHacks in the $5k AppLovin track. An AI-powered automatic video editor — it finds the moments and makes the cuts for you.',
+          links: [['GitHub', 'https://github.com/keegan-wang/Clipper-Final-Public']],
+        },
+        rotoscoper: {
+          title: 'Rotoscoper',
+          body: 'Automatic rotoscoping — isolating subjects from footage without the frame-by-frame labor.',
+          links: [['GitHub', 'https://github.com/keegan-wang/Rotoscoper-Public']],
+        },
+        film: {
+          title: 'Short film maker',
+          stats: [['30M+', 'total views'], ['5M+', 'total likes']],
+          body: 'I make short films.',
+          embed: `<div class="vcard">
+            <div class="vthumb">
+              <video src="/media/loml.mp4" autoplay muted loop playsinline></video>
+              <div class="vplay"></div>
+            </div>
+            <div class="vmeta">
+              <strong>loml ⭐️</strong>
+              <span>20.5M views · 3.2M likes<br>+716K likes on Instagram</span>
+            </div>
+          </div>
+          <div class="vcard">
+            <div class="vthumb">
+              <video src="/media/talking.mp4" autoplay muted loop playsinline></video>
+              <div class="vplay"></div>
+            </div>
+            <div class="vmeta">
+              <strong>funny story…</strong>
+              <span>3.9M views · 788K likes</span>
+            </div>
+          </div>`,
+          links: [
+            ['@keegan_wang on TikTok', 'https://www.tiktok.com/@keegan_wang'],
+            ['@keegan_wang on Instagram', 'https://www.instagram.com/keegan_wang/'],
+          ],
+        },
+        fa: {
+          title: 'f(a) = agents as a function',
+          body: 'Treating AI agents as pure functions in a distributed system: thousands of independent tasks executing in parallel from a shared frozen state, with better latency, cost, and correctness than sequential chat-based agents. Written for Phoebe’s garden.',
+          links: [['Read it', 'https://www.phoebe.work/garden/subagents-shared-state-execution-graphs']],
+        },
+        nondet: {
+          title: 'A reflection on nondeterministic evals',
+          body: 'How to evaluate LLM agents whose outputs are subjective: learn from real customer behavior, distrust simulated environments, and treat user errors as test cases. Written for Phoebe’s garden.',
+          links: [['Read it', 'https://www.phoebe.work/garden/evals-for-subjective-agents']],
+        },
+        weakest: {
+          title: 'Agentic systems are only as safe as their weakest link',
+          body: 'Models that reject false claims from peer agents can accept identical fabrications when they arrive as delegated tool results. Preserving source evidence prevents both the initial manipulation and its propagation through the system.',
+          links: [['Read the essay', 'https://marginsofintelligence.com/essays/agentic-systems-are-only-as-safe-as-their-weakest-link']],
+        },
+        fragility: {
+          title: 'The Fragility of Reality',
+          body: 'Synthetic consensus and the collapse of digital trust: as AI makes synthetic media indistinguishable from reality, the signals we use to judge credibility can be manufactured at scale. Verifying digital media — not banning AI — is how we preserve trust.',
+          links: [['Read the essay', 'https://marginsofintelligence.com/essays/the-fragility-of-reality']],
+        },
+      };
+      // item detail pages: the last slide, filled on demand
+      const SECTION_NAMES = ['', 'Research', 'Projects & Awards', 'Work', 'Writing', 'Other', 'Contact'];
+      const SECTION_PATHS = ['/', '/research', '/projects', '/work', '/writing', '/other', '/contact'];
+      // which section each item belongs to, and its URL slug
+      const ITEM_HOME = { a2a: 1, loyalties: 1, lbyc: 1, agai: 1, clipper: 2, rotoscoper: 2, cortex: 2, phoebe: 3, perfit: 3, cmode: 3, treffa: 3, film: 5, weakest: 4, fragility: 4, fa: 4, nondet: 4 };
+      const SLUGS = {
+        a2a: 'agent-to-agent-manipulation', loyalties: 'secret-loyalties', lbyc: 'look-before-you-click', agai: 'zero-trust-agents',
+        clipper: 'clipper', rotoscoper: 'rotoscoper', cortex: 'cortex-cam',
+        phoebe: 'phoebe', perfit: 'perfit', cmode: 'creative-mode', treffa: 'treffa',
+        weakest: 'weakest-link', fragility: 'the-fragility-of-reality',
+        fa: 'agents-as-a-function', nondet: 'nondeterministic-evals', film: 'short-films',
+      };
+      let detailParent = 1;
+      let detailKey = null;
+
+      function setURL(path, replace) {
+        if (location.protocol === 'file:') return;
+        try { history[replace ? 'replaceState' : 'pushState'](null, '', path); } catch (e) { /* sandboxed */ }
+      }
+      function currentPath() {
+        if (current === DETAIL && detailKey) return SECTION_PATHS[detailParent] + '/' + SLUGS[detailKey];
+        return SECTION_PATHS[current] || '/';
+      }
+
+      function fillDetail(key) {
+        const d = PANELS[key];
+        if (!d) return false;
+        detailParent = ITEM_HOME[key] || current || 1;
+        detailKey = key;
+        document.getElementById('dsection').textContent = SECTION_NAMES[detailParent] || '';
+        document.getElementById('dtitle').textContent = d.title;
+        const ds = document.getElementById('dstats');
+        ds.innerHTML = (d.stats || [])
+          .map(([num, label]) => `<div class="stat"><b>${num}</b><span>${label}</span></div>`)
+          .join('');
+        ds.style.display = d.stats ? 'flex' : 'none';
+        document.getElementById('dprose').innerHTML = d.body
+          .split(/\n\s*\n/)
+          .map((para) => { const p = document.createElement('p'); p.textContent = para; return p.outerHTML; })
+          .join('');
+        document.getElementById('dlinks').innerHTML = d.links
+          .map(([label, href]) => `<a href="${href}" target="_blank" rel="noopener">${label} →</a>`)
+          .join('');
+        const em = document.getElementById('dembed');
+        em.innerHTML = d.embed || '';
+        em.style.display = d.embed ? 'flex' : 'none';
+        em.querySelectorAll('video').forEach((v) => {
+          v.muted = true; // innerHTML-parsed muted attr doesn't always take; set it for autoplay
+          const p = v.play();
+          if (p) p.catch(() => {});
+        });
+        return true;
+      }
+      function openDetail(key, push = true) {
+        if (fillDetail(key)) go(DETAIL, push);
+      }
+      document.querySelectorAll('.item').forEach((b) => b.addEventListener('click', () => openDetail(b.dataset.p)));
+      // cinema mode: click a film and it takes the whole screen, room lights off
+      const cinema = document.getElementById('cinema');
+      const cinevid = document.getElementById('cinevid');
+      function openCinema(src) {
+        cinevid.src = src;
+        cinema.classList.remove('closed');
+        cinema.setAttribute('aria-hidden', 'false');
+        cinevid.currentTime = 0;
+        cinevid.muted = false;
+        cinevid.play();
+        document.querySelectorAll('#dembed video').forEach((v) => v.pause());
+      }
+      function closeCinema() {
+        if (cinema.classList.contains('closed')) return;
+        cinevid.pause();
+        cinema.classList.add('closed');
+        cinema.setAttribute('aria-hidden', 'true');
+        document.querySelectorAll('#dembed video').forEach((v) => { v.muted = true; v.play(); });
+      }
+      document.getElementById('dembed').addEventListener('click', (e) => {
+        const card = e.target.closest('.vcard');
+        if (!card) return;
+        openCinema(card.querySelector('video').currentSrc);
+      });
+      cinevid.addEventListener('click', () => (cinevid.paused ? cinevid.play() : cinevid.pause()));
+      cinevid.addEventListener('ended', closeCinema);
+      cinema.addEventListener('click', (e) => { if (e.target === cinema) closeCinema(); });
+      document.getElementById('cineclose').addEventListener('click', closeCinema);
+
+      function routeFromPath(path) {
+        const parts = path.replace(/\/+$/, '').split('/').filter(Boolean);
+        if (!parts.length) return { section: 0 };
+        const section = SECTION_PATHS.indexOf('/' + parts[0]);
+        if (section < 1) return { section: 0 };
+        if (parts[1]) {
+          const key = Object.keys(SLUGS).find((k) => SLUGS[k] === parts[1]);
+          if (key) return { section, key };
+        }
+        return { section };
+      }
+      addEventListener('popstate', () => {
+        const r = routeFromPath(location.pathname);
+        if (r.key) openDetail(r.key, false);
+        else go(r.section, false);
       });
 
-      let clockStart = performance.now();
-      function renderFrame(time) {
-        const p = progress();
-        const targetBeam = keyframeAt(p);
-        beamLevel += (targetBeam - beamLevel) * 0.06;
-        camPos.lerp(targetPos, 0.055);
-        camLook.lerp(targetLook, 0.055);
-        camera.position.set(
-          camPos.x + mouseX * 0.32,
-          camPos.y - mouseY * 0.18,
-          camPos.z
-        );
-        camera.lookAt(camLook);
-        beamCore.uniforms.uTime.value = time;
-        beamHalo.uniforms.uTime.value = time;
-        beamCore.uniforms.uIntensity.value = 0.34 * beamLevel;
-        beamHalo.uniforms.uIntensity.value = 0.12 * beamLevel;
-        glow.material.opacity = 0.85 * beamLevel;
-        dustMat.opacity = 0.6 * beamLevel;
-        updateMoments(p);
+      // hover sprite animations: activate only when the strip file exists
+      document.querySelectorAll('.panim').forEach((el) => {
+        const url = `/icons/${el.dataset.anim}-anim.png?v=4`;
+        const probe = new Image();
+        probe.onload = () => {
+          el.style.backgroundImage = `url(${url})`;
+          el.closest('.pane').classList.add('has-anim');
+        };
+        probe.src = url;
+      });
+      const N = slides.length;
+      const DUR = 0.62; // seconds per slide change
+      let current = 0;
+      let trans = null; // { from, to, dir, start }
+      let clock = 0;
+      // spotlight: fades projected content out so a zoomed beast can hold the light alone
+      let spot = 1, spotTarget = 1;
+      const pnavEl = document.querySelector('.pnav');
+
+      function go(i, push = true) {
+        const to = Math.max(0, Math.min(N - 1, i));
+        if (to === current || trans) return;
+        if (current === DETAIL && to !== DETAIL) {
+          document.querySelectorAll('#dembed video').forEach((v) => { v.pause(); v.muted = true; });
+        }
+        if (to !== DETAIL) detailKey = null;
+        if (reduced) {
+          current = to;
+          spot = spotTarget = 1;
+          if (push) setURL(currentPath());
+          document.title = to === 0 ? 'Keegan Wang' : `${SECTION_NAMES[to] || 'Keegan Wang'} — Keegan Wang`;
+          renderFrame(2);
+          return;
+        }
+        trans = { from: current, to, dir: Math.sign(to - current), start: clock };
+        if (push) {
+          const path = to === DETAIL && detailKey
+            ? SECTION_PATHS[detailParent] + '/' + SLUGS[detailKey]
+            : SECTION_PATHS[to] || '/';
+          setURL(path);
+        }
+        document.title = to === 0 ? 'Keegan Wang'
+          : to === DETAIL && detailKey ? `${PANELS[detailKey].title} — Keegan Wang`
+          : `${SECTION_NAMES[to]} — Keegan Wang`;
+      }
+
+      // click a pane: its beast grows to center stage, then returns as the section arrives
+      const zoomer = document.getElementById('zoomer');
+      let zooming = false;
+      function localRect(el) {
+        let x = 0, y = 0, n = el;
+        while (n && n !== frame) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; }
+        return { x, y, w: el.offsetWidth, h: el.offsetHeight };
+      }
+      function zoomGo(pane, target) {
+        if (zooming) return;
+        const anim = pane.querySelector('.panim');
+        const img = pane.querySelector('.pimg');
+        const hasAnim = pane.classList.contains('has-anim');
+        const src = hasAnim ? anim.style.backgroundImage : (img ? `url("${img.src}")` : null);
+        if (!src) { go(target); return; }
+        zooming = true;
+        spotTarget = 0; // dim everything else; the beast gets the light
+        const iconEl = hasAnim ? anim : img;
+        const r = localRect(iconEl);
+        zoomer.className = hasAnim ? 'anim' : 'static';
+        if (hasAnim) zoomer.style.setProperty('--spd', anim.style.getPropertyValue('--spd') || '1.1s');
+        zoomer.style.backgroundImage = src;
+        zoomer.style.left = r.x + 'px';
+        zoomer.style.top = r.y + 'px';
+        zoomer.style.transition = 'none';
+        zoomer.style.transform = 'none';
+        zoomer.style.display = 'block';
+        zoomer.style.opacity = '1';
+        const iconPx = parseFloat(frame.style.fontSize) * 8;
+        const S = (baseH * 0.82) / iconPx;
+        const dx = baseW / 2 - (r.x + r.w / 2);
+        const dy = baseH / 2 - (r.y + r.h / 2);
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          zoomer.style.transition = 'transform 0.7s cubic-bezier(0.25, 0.6, 0.2, 1)';
+          zoomer.style.transform = `translate(${dx}px, ${dy}px) scale(${S})`;
+        }));
+        // let the beast hold the empty light for a beat, then bring in the section
+        setTimeout(() => {
+          go(target);
+          zoomer.style.transition = 'transform 0.55s cubic-bezier(0.55, 0, 0.6, 1), opacity 0.3s ease 0.22s';
+          zoomer.style.transform = 'none';
+          zoomer.style.opacity = '0';
+        }, 1900);
+        setTimeout(() => { zoomer.style.display = 'none'; zooming = false; }, 2600);
+      }
+      menuBtns.forEach((b) => b.addEventListener('click', () => {
+        if (b.classList.contains('pback')) { go(current === DETAIL ? detailParent : 0); return; }
+        if (b.classList.contains('pane') && !reduced) zoomGo(b, +b.dataset.i);
+        else go(+b.dataset.i);
+      }));
+      // keyboard still works as a quiet convenience
+      addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !cinema.classList.contains('closed')) { closeCinema(); return; }
+        if (e.key === 'Escape' && current === DETAIL) { go(detailParent); return; }
+        if (['ArrowDown', 'ArrowRight', 'PageDown'].includes(e.key)) {
+          e.preventDefault();
+          if (current < DETAIL - 1) go(current + 1);
+        }
+        if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.key)) {
+          e.preventDefault();
+          go(current === DETAIL ? detailParent : current - 1);
+        }
+      });
+
+      // ---- pointer: parallax head-sway + cursor shadow in the beam ----
+      let mx = 0, my = 0;
+      const cursorWall = new THREE.Vector2(99, 99);
+      let cursorOnTarget = 0, cursorOn = 0;
+      const ray = new THREE.Vector3();
+      addEventListener('pointermove', (e) => {
+        mx = (e.clientX / innerWidth) * 2 - 1;
+        my = (e.clientY / innerHeight) * 2 - 1;
+        ray.set(mx, -my, 0.5).unproject(camera).sub(camera.position).normalize();
+        const t = -camera.position.z / ray.z;
+        cursorWall.set(camera.position.x + ray.x * t, camera.position.y + ray.y * t);
+        cursorOnTarget = 1;
+      }, { passive: true });
+      addEventListener('pointerleave', () => { cursorOnTarget = 0; });
+
+      const easeOut = (x) => 1 - Math.pow(1 - x, 3);
+
+      function renderFrame(t) {
+        clock = t;
+        // head sway — kept very subtle
+        camera.position.set(CAM_REST.x + mx * 0.05, CAM_REST.y - my * 0.03, CAM_REST.z);
+        camera.lookAt(0, 0.15, 0);
+
+        // baseline light: a gentle warm-up with a decaying waver, then a slow breathe
+        const warm = Math.min(1, t / 1.6);
+        let strike = 1;
+        if (t < 1.6) {
+          strike = 1 - (1 - t / 1.6) * 0.3 * (0.5 + 0.5 * Math.sin(t * 7 + 1));
+        }
+        const breathe = 0.965 + 0.035 * Math.sin(t * 1.1 + Math.sin(t * 0.63) * 2.0);
+        let light = reduced ? 1 : warm * strike * breathe;
+
+        // gate weave
+        let jx = 0, jy = 0;
+        if (!reduced) {
+          jx = Math.sin(t * 0.9) * 0.008 + Math.sin(t * 2.3 + 1.7) * 0.005;
+          jy = Math.sin(t * 1.15 + 0.8) * 0.007 + Math.sin(t * 2.9) * 0.004;
+        }
+
+        // the slide change: shutter → swap in the dark → drop in and refocus
+        let visible = current;
+        let enterOff = 0, enterBlur = 0, exitOff = 0;
+        if (trans) {
+          const tt = (t - trans.start) / DUR;
+          if (tt >= 1) {
+            current = trans.to;
+            visible = current;
+            trans = null;
+          } else if (tt < 0.24) {
+            // shutter closing; outgoing slide pulled out of the gate
+            const k = tt / 0.24;
+            light *= 1 - 0.95 * k;
+            visible = trans.from;
+            exitOff = -k * 7 * trans.dir;
+            jx += Math.sin(t * 47) * 0.012 * k;
+            jy += Math.cos(t * 53) * 0.02 * k;
+          } else {
+            // next slide drops in, light snaps back, focus settles
+            spotTarget = 1; // restore content only once the outgoing slide is out of the gate
+            const k = easeOut((tt - 0.24) / 0.76);
+            visible = trans.to;
+            light *= 0.05 + 0.95 * k;
+            if (k < 0.35) light *= 0.75 + 0.25 * Math.sin(t * 82);
+            enterOff = (1 - k) * 6 * trans.dir;
+            enterBlur = (1 - k) * 5;
+            jx += Math.sin(t * 47) * 0.014 * (1 - k);
+            jy += Math.cos(t * 53) * 0.022 * (1 - k);
+          }
+        }
+
+        wallMat.uniforms.uRectC.value.set(rectC.x + jx, rectC.y + jy);
+        wallMat.uniforms.uLight.value = light;
+        wallMat.uniforms.uTime.value = t;
+        cursorOn += (cursorOnTarget - cursorOn) * 0.08;
+        wallMat.uniforms.uCursor.value.copy(cursorWall);
+        wallMat.uniforms.uCursorOn.value = cursorOn;
+        dustMat.uniforms.uLight.value = light;
+        dustMat.uniforms.uTime.value = t;
+        silMat.uniforms.uLight.value = light;
+        coneA.mat.uniforms.uTime.value = t;
+        coneB.mat.uniforms.uTime.value = t;
+        coneA.mat.uniforms.uIntensity.value = 0.2 * light;
+        coneB.mat.uniforms.uIntensity.value = 0.07 * light;
+        lensGlow.material.opacity = 0.9 * light;
+        if (!reduced) {
+          reelFront.spinner.rotation.z = -t * 2.1;
+          reelBack.spinner.rotation.z = -t * 3.2;
+        }
+
+        // track the DOM to the lit rectangle
+        camera.updateMatrixWorld();
+        camera.matrixWorldInverse.copy(camera.matrixWorld).invert();
+        const c = wallMat.uniforms.uRectC.value;
+        const a = new THREE.Vector3(c.x - rectH.x, c.y + rectH.y, 0).project(camera);
+        const b = new THREE.Vector3(c.x + rectH.x, c.y - rectH.y, 0).project(camera);
+        const x0 = (a.x * 0.5 + 0.5) * innerWidth;
+        const y0 = (-a.y * 0.5 + 0.5) * innerHeight;
+        const x1 = (b.x * 0.5 + 0.5) * innerWidth;
+        const y1 = (-b.y * 0.5 + 0.5) * innerHeight;
+        frame.style.transform = `translate(${x0}px, ${y0}px) scale(${(x1 - x0) / baseW}, ${(y1 - y0) / baseH})`;
+        frame.style.opacity = Math.min(1, light * 1.15).toFixed(3);
+
+        spot += (spotTarget - spot) * 0.14;
+        pnavEl.style.opacity = spot.toFixed(3);
+        slides.forEach((el, i) => {
+          const on = i === visible;
+          el.style.opacity = on ? spot.toFixed(3) : 0;
+          el.classList.toggle('active', on && !trans);
+          if (on) {
+            const off = trans ? (visible === (trans && trans.to) ? enterOff : exitOff) : 0;
+            el.style.transform = off ? `translateY(${off}%)` : 'none';
+            el.style.filter = enterBlur > 0.2 && visible === (trans && trans.to) ? `blur(${enterBlur.toFixed(1)}px)` : 'none';
+          } else {
+            el.style.transform = 'none';
+            el.style.filter = 'none';
+          }
+        });
+        const shown = trans ? trans.to : current;
+        menuBtns.forEach((b) => b.classList.toggle('on', +b.dataset.i === shown && +b.dataset.i !== 0));
+        pname.classList.toggle('hidden', shown === 0);
+        pback.classList.toggle('hidden', shown === 0);
+
         renderer.render(scene, camera);
       }
 
+      function driftDust(dt, t) {
+        for (let i = 0; i < COUNT; i++) {
+          const d = drift[i];
+          positions[i * 3] += (d.vx + Math.sin(t * 0.5 + d.wob) * 0.02) * dt;
+          positions[i * 3 + 1] += (d.vy + Math.cos(t * 0.4 + d.wob) * 0.012) * dt;
+          if (positions[i * 3] > 4.2) positions[i * 3] = -4.2;
+          if (positions[i * 3] < -4.2) positions[i * 3] = 4.2;
+          if (positions[i * 3 + 1] > 3.2) positions[i * 3 + 1] = -2.2;
+          if (positions[i * 3 + 1] < -2.2) positions[i * 3 + 1] = 3.2;
+        }
+        dustGeo.attributes.position.needsUpdate = true;
+      }
+
+      // deep link: restore the requested page (direct visit or 404-bounce)
+      (function initRoute() {
+        let path = null;
+        try {
+          path = sessionStorage.getItem('kw-route');
+          if (path) sessionStorage.removeItem('kw-route');
+        } catch (e) { /* private mode */ }
+        path = path || location.pathname;
+        const r = routeFromPath(path);
+        if (r.key && fillDetail(r.key)) {
+          current = DETAIL;
+          document.title = `${PANELS[r.key].title} — Keegan Wang`;
+        } else if (r.section) {
+          current = r.section;
+          document.title = `${SECTION_NAMES[r.section]} — Keegan Wang`;
+        }
+        setURL(currentPath(), true);
+      })();
+
       if (reduced) {
-        renderFrame(0);
-        addEventListener('scroll', () => renderFrame(0), { passive: true });
+        renderFrame(2);
       } else {
+        const start = performance.now();
+        let last = start;
         renderer.setAnimationLoop(() => {
-          const t = (performance.now() - clockStart) / 1000;
-          layoutDust(t);
+          const now = performance.now();
+          const t = (now - start) / 1000;
+          driftDust(Math.min((now - last) / 1000, 0.05), t);
+          last = now;
           renderFrame(t);
         });
       }
     } else {
-      // flat fallback: stack the moments as a normal page
       document.documentElement.classList.add('flat');
     }
   </script>
