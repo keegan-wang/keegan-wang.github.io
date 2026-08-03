@@ -229,6 +229,7 @@
     }
     .slide.active { pointer-events: auto; }
     .slide .inner { max-width: 36em; width: 100%; }
+    #s2 .inner { transform: translateY(1.2em); }
     .slide * { text-shadow: 0 0 1px rgba(43, 24, 12, 0.35); }
 
     h1 { font-size: 4.6em; font-weight: 400; letter-spacing: -0.01em; line-height: 1.05; margin: 0; }
@@ -250,8 +251,9 @@
     }
     .worklist .note { display: block; font-style: italic; font-size: 0.52em; color: var(--ink-dim); margin-top: 0.35em; }
     .worklist .soon { color: var(--ink-faint); font-style: italic; font-size: 0.78em; }
-    .worklist.compact { font-size: 1.5em; }
-    .worklist.compact li { margin-bottom: 0.8em; }
+    .worklist.compact { font-size: 1.38em; }
+    .worklist.compact li { margin-bottom: 0.68em; }
+    .worklist.compact .note { margin-top: 0.22em; }
     .prose { font-size: 1.32em; line-height: 1.75; margin: 0; font-weight: 400; }
     .prose em { font-weight: 400; }
     .contact-line { font-size: 1.4em; margin: 0; line-height: 1.8; font-weight: 400; }
@@ -274,6 +276,7 @@
       transform: none !important; filter: none !important;
       pointer-events: auto; padding: 4rem 8%;
     }
+    .flat #s2 .inner { transform: none; }
 
     @media (prefers-reduced-motion: reduce) { .grain { animation: none; } }
   </style>
@@ -506,6 +509,7 @@
         <h2>Work</h2>
         <ul class="worklist compact">
           <li><button class="item" data-p="phoebe">AI Engineer @ Phoebe</button><span class="note">building digital workers to coordinate the physical economy</span></li>
+          <li><button class="item" data-p="margins">AI Alignment Researcher @ Margins of Intelligence</button></li>
           <li><button class="item" data-p="perfit">Founding Engineer / CMO @ Perfit</button><span class="note">80k on waitlist</span></li>
           <li><button class="item" data-p="cmode">Software Engineer @ CreativeMode</button><span class="note">YC S24</span></li>
           <li><button class="item" data-p="treffa">Founding Engineer / CMO @ Treffa</button><span class="note">100k+ users, 500M+ views</span></li>
@@ -982,6 +986,14 @@
           body: 'CreativeMode (YC S24) lets players create mods for their favorite games without writing code, starting with Minecraft — putting the power of a game studio at every player’s fingertips.\n\nDesigned and implemented a distributed multi-agent AI pipeline orchestrated with Rust services and Kubernetes, dynamically spawning per-task servers to handle concurrent AI editing jobs.',
           links: [],
         },
+        margins: {
+          title: 'AI Alignment Researcher @ Margins of Intelligence',
+          body: 'Co-founded Margins of Intelligence, an AI safety research group. Co-authored and published research on agent-to-agent manipulation, and designed multi-agent benchmarks measuring persuasion, error propagation, evidence grounding, and delegated trust across frontier language models.',
+          links: [
+            ['marginsofintelligence.com', 'https://marginsofintelligence.com'],
+            ['Agent-to-agent manipulation', 'https://marginsofintelligence.com/research-logs/agent-to-agent-manipulation'],
+          ],
+        },
         perfit: {
           title: 'Founding Engineer / Chief Marketing Officer @ Perfit',
           body: 'Built GTM software and an AI video editor that created 25 videos per day, helping grow the waitlist to 80,000 people.',
@@ -1056,11 +1068,11 @@
       const SECTION_NAMES = ['', 'Research', 'Projects & Awards', 'Work', 'Writing', 'Other', 'Contact'];
       const SECTION_PATHS = ['/', '/research', '/projects', '/work', '/writing', '/other', '/contact'];
       // which section each item belongs to, and its URL slug
-      const ITEM_HOME = { a2a: 1, loyalties: 1, lbyc: 1, agai: 1, clipper: 2, rotoscoper: 2, cortex: 2, phoebe: 3, perfit: 3, cmode: 3, treffa: 3, film: 5, weakest: 4, fragility: 4, fa: 4, nondet: 4 };
+      const ITEM_HOME = { a2a: 1, loyalties: 1, lbyc: 1, agai: 1, clipper: 2, rotoscoper: 2, cortex: 2, phoebe: 3, margins: 3, perfit: 3, cmode: 3, treffa: 3, film: 5, weakest: 4, fragility: 4, fa: 4, nondet: 4 };
       const SLUGS = {
         a2a: 'agent-to-agent-manipulation', loyalties: 'secret-loyalties', lbyc: 'look-before-you-click', agai: 'zero-trust-agents',
         clipper: 'clipper', rotoscoper: 'rotoscoper', cortex: 'cortex-cam',
-        phoebe: 'phoebe', perfit: 'perfit', cmode: 'creative-mode', treffa: 'treffa',
+        phoebe: 'phoebe', margins: 'margins-of-intelligence', perfit: 'perfit', cmode: 'creative-mode', treffa: 'treffa',
         weakest: 'weakest-link', fragility: 'the-fragility-of-reality',
         fa: 'agents-as-a-function', nondet: 'nondeterministic-evals', film: 'short-films',
       };
