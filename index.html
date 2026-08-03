@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Keegan Wang</title>
   <meta name="description" content="Keegan Wang — software, film, and the light between them.">
   <meta name="theme-color" content="#0b0705">
@@ -202,7 +202,7 @@
       transform: rotate(-3deg);
       transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
     }
-    @keyframes sprite16 { to { background-position: -128em 0; } }
+    @keyframes sprite16 { to { background-position: var(--sprite-end, -128em) 0; } }
     .pane.has-anim:hover .pimg, .pane.has-anim:hover svg { opacity: 0; }
     .pane.has-anim:hover .panim {
       opacity: 1;
@@ -275,6 +275,144 @@
     .contact-line a { border-bottom: 1px solid var(--ink-faint); padding-bottom: 2px; }
     .contact-line a:hover { color: #000; border-color: var(--ink); }
     .fin { margin-top: 2.6em; font-style: italic; font-size: 0.9em; color: var(--ink-faint); letter-spacing: 0.08em; }
+
+    /* portrait phones keep the projector, but use a touch-first composition */
+    @media (max-width: 700px) and (orientation: portrait) {
+      html:not(.flat) .pnav {
+        align-items: center;
+        padding: 5.5% 7% 0;
+      }
+      html:not(.flat) .pname { display: none; }
+      html:not(.flat) .pleft { gap: 0; }
+      html:not(.flat) .pback { font-size: 1.55em; line-height: 1; }
+      html:not(.flat) .pcontact { font-size: 0.88em; }
+
+      html:not(.flat) .slide {
+        align-items: flex-start;
+        padding: 19% 7% 7%;
+      }
+      html:not(.flat) #s0 {
+        align-items: center;
+        padding: 7%;
+      }
+      html:not(.flat) .slide .inner {
+        max-height: 100%;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+      html:not(.flat) .slide .inner::-webkit-scrollbar { display: none; }
+      html:not(.flat) #s0 .inner { max-height: none; overflow: visible; }
+
+      h1 { font-size: 3.65em; }
+      .tagline { font-size: 1.05em; line-height: 1.35; }
+      .subline { font-size: 0.74em; line-height: 1.45; }
+      h2 { margin-bottom: 1.35em; }
+
+      #panes {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 1em;
+        row-gap: 2.2em;
+        margin-top: 2.4em;
+      }
+      .pane {
+        grid-column: span 1 !important;
+        height: 5.8em;
+      }
+      .pane[data-i="5"] {
+        grid-column: 1 / -1 !important;
+        justify-self: center;
+        width: calc(50% - 0.5em);
+      }
+      .pane svg, .pane .pimg, .pane .panim {
+        top: -2.1em;
+        right: -0.7em;
+        width: 6.2em;
+        height: 6.2em;
+      }
+      .pane .label {
+        left: 0.8em;
+        bottom: 0.7em;
+        max-width: calc(100% - 1.4em);
+        font-size: 0.7em;
+        letter-spacing: 0.12em;
+        line-height: 1.35;
+      }
+
+      .worklist { font-size: 1.72em; }
+      .worklist.compact { font-size: 1.5em; }
+      .worklist.compact li { margin-bottom: 0.82em; }
+      .detail-title { font-size: 2.25em; }
+      .detail-prose { font-size: 1.18em; line-height: 1.65; }
+      #sd h2 { margin-bottom: 1em; }
+      #sd .inner { padding-right: 0.5em; }
+      #dstats { gap: 1.5em; flex-wrap: wrap; }
+      #dembed { gap: 1em; }
+      .vthumb video { height: 10em; }
+      .contact-line { font-size: 1.55em; line-height: 2; }
+    }
+
+    @media (max-height: 500px) and (orientation: landscape) {
+      html:not(.flat) .pnav {
+        align-items: center;
+        padding: 3.5% 6% 0;
+      }
+      html:not(.flat) .pname { display: none; }
+      html:not(.flat) .pleft { gap: 0; }
+      html:not(.flat) .pback { font-size: 1.45em; line-height: 1; }
+
+      html:not(.flat) .slide {
+        align-items: flex-start;
+        padding: 12% 7% 4%;
+      }
+      html:not(.flat) #s0 {
+        align-items: center;
+        padding: 5% 7%;
+      }
+      html:not(.flat) .slide .inner {
+        max-height: 100%;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+      html:not(.flat) .slide .inner::-webkit-scrollbar { display: none; }
+      html:not(.flat) #s0 .inner { max-height: none; overflow: visible; }
+
+      h1 { font-size: 3.6em; }
+      h2 { margin-bottom: 1.15em; }
+      #panes { row-gap: 1.5em; margin-top: 1.7em; }
+      .pane { height: 5.4em; }
+      .pane svg, .pane .pimg, .pane .panim {
+        top: -1.9em;
+        right: -0.7em;
+        width: 5.8em;
+        height: 5.8em;
+      }
+      .pane .label {
+        left: 0.8em;
+        bottom: 0.65em;
+        font-size: 0.68em;
+        letter-spacing: 0.12em;
+        line-height: 1.3;
+      }
+      .worklist { font-size: 1.65em; }
+      .worklist.compact { font-size: 1.4em; }
+      .detail-title { font-size: 2.2em; }
+      .detail-prose { font-size: 1.12em; line-height: 1.6; }
+      #sd .inner { padding-right: 0.5em; }
+    }
+
+    @media (hover: none) {
+      .pane:hover .pimg, .pane:hover svg { transform: rotate(-3deg); }
+      .pane.has-anim:hover .pimg, .pane.has-anim:hover svg { opacity: 1; }
+      .pane.has-anim:hover .panim {
+        opacity: 0;
+        animation: none;
+        transform: rotate(-3deg);
+      }
+    }
 
     /* fallback when WebGL is unavailable: the projection becomes a warm card */
     .flat body { overflow: auto; }
@@ -594,22 +732,47 @@
     </style>
   </noscript>
 
-  <script type="importmap">
-    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }
+  <script>
+    (() => {
+      const root = document.documentElement;
+      const useFallback = () => {
+        root.classList.remove('booting');
+        root.classList.add('flat');
+      };
+      const onScriptError = (event) => {
+        if (event.target && event.target.tagName === 'SCRIPT') useFallback();
+      };
+      root.classList.add('booting');
+      addEventListener('error', onScriptError, true);
+      const timeout = matchMedia('(max-width: 700px), (max-height: 500px)').matches ? 3500 : 6000;
+      const timer = setTimeout(useFallback, timeout);
+      window.__kwProjectionReady = () => {
+        clearTimeout(timer);
+        removeEventListener('error', onScriptError, true);
+        root.classList.remove('booting');
+      };
+      window.__kwProjectionFallback = () => {
+        clearTimeout(timer);
+        removeEventListener('error', onScriptError, true);
+        useFallback();
+      };
+    })();
   </script>
   <script type="module">
-    import * as THREE from 'three';
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
 
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     let renderer;
-    try {
-      renderer = new THREE.WebGLRenderer({ antialias: true });
-    } catch (e) {
-      document.documentElement.classList.add('flat');
+    if (!document.documentElement.classList.contains('flat')) {
+      try {
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+      } catch (e) {
+        window.__kwProjectionFallback();
+      }
     }
 
     if (renderer) {
-      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      renderer.setPixelRatio(Math.min(devicePixelRatio, Math.min(innerWidth, innerHeight) < 700 ? 1.5 : 2));
       renderer.setSize(innerWidth, innerHeight);
       document.getElementById('scene').appendChild(renderer.domElement);
 
@@ -926,6 +1089,7 @@
       function layout() {
         camera.aspect = innerWidth / innerHeight;
         camera.updateProjectionMatrix();
+        renderer.setPixelRatio(Math.min(devicePixelRatio, Math.min(innerWidth, innerHeight) < 700 ? 1.5 : 2));
         renderer.setSize(innerWidth, innerHeight);
         const halfH = Math.tan(THREE.MathUtils.degToRad(22.5)) * CAM_REST.z;
         const halfW = halfH * camera.aspect;
@@ -940,7 +1104,7 @@
         baseH = (hy / halfH) * innerHeight;
         frame.style.width = baseW + 'px';
         frame.style.height = baseH + 'px';
-        frame.style.fontSize = (baseW / 54) * (baseW < 620 ? 1.3 : 1) + 'px';
+        frame.style.fontSize = (baseW / 54) * (portrait ? 1.5 : 1) + 'px';
         aimProjector();
       }
       layout();
@@ -1136,7 +1300,8 @@
       function fitDetail() {
         const inner = document.querySelector('#sd .inner');
         inner.style.fontSize = '';
-        if (inner.scrollHeight > inner.clientHeight + 2) {
+        const mobileLayout = matchMedia('(max-width: 700px), (max-height: 500px)').matches;
+        if (!mobileLayout && inner.scrollHeight > inner.clientHeight + 2) {
           for (let s = 0.96; s >= 0.5; s -= 0.03) {
             inner.style.fontSize = s + 'em';
             if (inner.scrollHeight <= inner.clientHeight + 2) break;
@@ -1267,12 +1432,19 @@
         zoomer.style.backgroundImage = src;
         zoomer.style.left = r.x + 'px';
         zoomer.style.top = r.y + 'px';
+        zoomer.style.width = r.w + 'px';
+        zoomer.style.height = r.h + 'px';
+        if (hasAnim) {
+          zoomer.style.backgroundSize = `${r.w * 16}px ${r.h}px`;
+          zoomer.style.setProperty('--sprite-end', `${-r.w * 16}px`);
+        } else {
+          zoomer.style.backgroundSize = 'contain';
+        }
         zoomer.style.transition = 'none';
         zoomer.style.transform = 'none';
         zoomer.style.display = 'block';
         zoomer.style.opacity = '1';
-        const iconPx = parseFloat(frame.style.fontSize) * 8;
-        const S = (baseH * 0.82) / iconPx;
+        const S = (baseH * 0.82) / r.h;
         const dx = baseW / 2 - (r.x + r.w / 2);
         const dy = baseH / 2 - (r.y + r.h / 2);
         requestAnimationFrame(() => requestAnimationFrame(() => {
@@ -1286,7 +1458,14 @@
           zoomer.style.transform = 'none';
           zoomer.style.opacity = '0';
         }, 1900);
-        setTimeout(() => { zoomer.style.display = 'none'; zooming = false; }, 2600);
+        setTimeout(() => {
+          zoomer.style.display = 'none';
+          zoomer.style.width = '';
+          zoomer.style.height = '';
+          zoomer.style.backgroundSize = '';
+          zoomer.style.removeProperty('--sprite-end');
+          zooming = false;
+        }, 2600);
       }
       menuBtns.forEach((b) => b.addEventListener('click', () => {
         if (b.classList.contains('pback')) { go(current === DETAIL ? detailParent : 0); return; }
@@ -1464,7 +1643,9 @@
         setURL(currentPath(), true);
       })();
 
-      if (reduced) {
+      if (document.documentElement.classList.contains('flat')) {
+        renderer.dispose();
+      } else if (reduced) {
         renderFrame(2);
       } else {
         const start = performance.now();
@@ -1477,8 +1658,9 @@
           renderFrame(t);
         });
       }
+      if (!document.documentElement.classList.contains('flat')) window.__kwProjectionReady();
     } else {
-      document.documentElement.classList.add('flat');
+      window.__kwProjectionFallback();
     }
   </script>
 </body>
