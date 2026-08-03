@@ -83,14 +83,16 @@
 
     /* item detail page, projected like every other section */
     #sd { align-items: flex-start; }
+    #sd h2 { margin-bottom: 1.1em; }
     #sd .inner {
-      max-height: 100%; overflow-y: auto; padding-right: 1.2em; padding-bottom: 2.5em;
+      max-width: 52em;
+      max-height: 100%; overflow-y: auto; padding-right: 1.2em; padding-bottom: 0.8em;
       scrollbar-width: thin; scrollbar-color: rgba(43, 24, 12, 0.3) transparent;
       -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 88%, transparent 100%);
       mask-image: linear-gradient(to bottom, #000 0, #000 88%, transparent 100%);
     }
-    .detail-title { font-size: 2.7em; font-weight: 400; line-height: 1.15; margin: 0 0 0.55em; max-width: 15em; }
-    .detail-prose { font-size: 1.08em; line-height: 1.8; max-width: 34em; }
+    .detail-title { font-size: 2.7em; font-weight: 400; line-height: 1.15; margin: 0 0 0.55em; max-width: 18em; }
+    .detail-prose { font-size: 1.08em; line-height: 1.8; max-width: 46em; }
     .detail-prose p { margin: 0 0 1.1em; }
     .plinks { display: flex; gap: 1.7em; flex-wrap: wrap; margin-top: 1.4em; }
     #dembed { margin: 1.4em 0 0.4em; display: flex; gap: 1.4em; flex-wrap: wrap; align-items: flex-start; }
@@ -223,13 +225,13 @@
     .slide {
       position: absolute; inset: 0;
       display: flex; align-items: center;
-      text-align: left; padding: 10% 8% 7%;
+      text-align: left; padding: 14% 8% 3%;
       opacity: 0; pointer-events: none;
       will-change: opacity, transform, filter;
     }
+    #s0 { padding: 10% 8% 7%; }
     .slide.active { pointer-events: auto; }
     .slide .inner { max-width: 36em; width: 100%; }
-    #s2 .inner { transform: translateY(1.2em); }
     .slide * { text-shadow: 0 0 1px rgba(43, 24, 12, 0.35); }
 
     h1 { font-size: 4.6em; font-weight: 400; letter-spacing: -0.01em; line-height: 1.05; margin: 0; }
@@ -271,12 +273,11 @@
       background: radial-gradient(ellipse at 50% 40%, #ffd9a8, #eebe85);
       border-radius: 4px; box-shadow: 0 0 120px rgba(255, 196, 138, 0.25);
     }
-    .flat .slide {
+    .flat .slide, .flat #s0 {
       position: relative; inset: auto; opacity: 1 !important;
       transform: none !important; filter: none !important;
       pointer-events: auto; padding: 4rem 8%;
     }
-    .flat #s2 .inner { transform: none; }
 
     @media (prefers-reduced-motion: reduce) { .grain { animation: none; } }
   </style>
@@ -930,7 +931,7 @@
         aimProjector();
       }
       layout();
-      addEventListener('resize', () => { layout(); if (reduced) renderFrame(2); });
+      addEventListener('resize', () => { layout(); fitDetail(); if (reduced) renderFrame(2); });
 
       // ---- carousel mechanics: discrete slides, mechanical changes ----
       const slides = [...document.querySelectorAll('.slide')];
@@ -1115,7 +1116,23 @@
           const p = v.play();
           if (p) p.catch(() => {});
         });
+        fitDetail();
         return true;
+      }
+      // shrink detail type until the page fits the projected light (no scrolling needed)
+      function fitDetail() {
+        const inner = document.querySelector('#sd .inner');
+        inner.style.fontSize = '';
+        if (inner.scrollHeight > inner.clientHeight + 2) {
+          for (let s = 0.96; s >= 0.5; s -= 0.03) {
+            inner.style.fontSize = s + 'em';
+            if (inner.scrollHeight <= inner.clientHeight + 2) break;
+          }
+        }
+        // the bottom fade only earns its keep when something is actually cut off
+        const fits = inner.scrollHeight <= inner.clientHeight + 2;
+        inner.style.webkitMaskImage = fits ? 'none' : '';
+        inner.style.maskImage = fits ? 'none' : '';
       }
       function openDetail(key, push = true) {
         if (fillDetail(key)) go(DETAIL, push);
